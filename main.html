@@ -110,6 +110,15 @@
 							cellName.colSpan = 2;
 						}
 						
+						cellName.title = 
+							items[i].title + "\r\n" +
+							"ID: " + items[i].id + "\r\n" +
+							"Priority: " + items[i].priority + "\r\n" +
+							"Percent: " + items[i].percentDone + "%\r\n" +
+							((items[i].comments == "") ? "" : ("-----------------\r\n" + items[i].comments))
+							
+						
+						
 						row.appendChild(cellName);
 						tblB.appendChild(row);					
 					}
@@ -151,7 +160,20 @@
 				
 				function dateDiff( x )
 				{
-					return (x.getTime() - m_today.getTime()) / m_day
+					a = new Date( x )
+					a.setHours( 8 )
+					a.setMinutes( 0 )
+					a.setSeconds( 0 )
+					a.setMilliseconds( 0 )
+					
+					b = new Date()
+					b.setHours( 8 )
+					b.setMinutes( 0 )
+					b.setSeconds( 0 )
+					b.setMilliseconds( 0 )
+					
+					return (a.getTime() - b.getTime()) / m_day
+					//~ return (x.getTime() - m_today.getTime()) / m_day
 				}				
 				
 				function sortByDate( x, y )
@@ -200,39 +222,45 @@
 								continue;
 							}
 						
-							var dateStr = n.getAttributeNode( "DUEDATESTRING" ).value
-							
-							//2010-03-11 15:00
-							var dre = dateStr.match( /^(\d\d\d\d)(-|\/)(\d\d)(-|\/)(\d\d)( (\d\d):(\d\d))?/i )
-							
-							var date = new Date();
-							date.setFullYear( dre[1] );
-							date.setMonth( dre[3] - 1 );
-							date.setDate( dre[5] );
-							
-							if( dre[6] != "" )
-							{
-								date.setHours( dre[7] );
-								date.setMinutes( dre[8] );
-							}
-							else
-							{
-								date.setHours( m_defaultTimeHour );
-								date.setMinutes( m_defaultTimeMinute );
-							}
-							
-							date.setSeconds( 0 )
-							
 							items[items.length] = {
-																date:date, 
+																date:parseDate( n.getAttributeNode( "DUEDATESTRING" ).value ), 
 																title:n.getAttributeNode( "TITLE" ).value, 
 																id:n.getAttributeNode( "ID" ).value, 
-																priority:parseInt(n.getAttributeNode( "PRIORITY" ).value)
-															  }  
+																priority:parseInt(n.getAttributeNode( "PRIORITY" ).value),
+																percentDone:n.getAttributeNode( "PERCENTDONE" ) != null ?n.getAttributeNode( "PERCENTDONE" ).value : 0,
+																createDate:parseDate( n.getAttributeNode( "CREATIONDATESTRING" ).value ),
+																comments:n.getAttributeNode( "COMMENTS" ) != null ? n.getAttributeNode( "COMMENTS" ).value : ""
+															  }
 						}
 						
 						FindTasks( xmlDoc, n, level + 1, items );
 					}
+				}
+				
+				function parseDate( dateStr )
+				{
+					//2010-03-11 15:00
+					var dre = dateStr.match( /^(\d\d\d\d)(-|\/)(\d\d)(-|\/)(\d\d)( (\d\d):(\d\d))?/i )
+					
+					var date = new Date();
+					date.setFullYear( dre[1] );
+					date.setMonth( dre[3] - 1 );
+					date.setDate( dre[5] );
+					
+					if( dre[6] != "" )
+					{
+						date.setHours( dre[7] );
+						date.setMinutes( dre[8] );
+					}
+					else
+					{
+						date.setHours( m_defaultTimeHour );
+						date.setMinutes( m_defaultTimeMinute );
+					}
+					
+					date.setSeconds( 0 )
+				
+					return date
 				}
 				
 				function reloadPage()
