@@ -203,17 +203,17 @@
 							var dateStr = n.getAttributeNode( "DUEDATESTRING" ).value
 							
 							//2010-03-11 15:00
-							var dre = dateStr.match( /^(\d\d\d\d)-(\d\d)-(\d\d)( (\d\d):(\d\d))?/i )
+							var dre = dateStr.match( /^(\d\d\d\d)(-|\/)(\d\d)(-|\/)(\d\d)( (\d\d):(\d\d))?/i )
 							
 							var date = new Date();
 							date.setFullYear( dre[1] );
-							date.setMonth( dre[2] - 1 );
-							date.setDate( dre[3] );
+							date.setMonth( dre[3] - 1 );
+							date.setDate( dre[5] );
 							
-							if( dre[4] != "" )
+							if( dre[6] != "" )
 							{
-								date.setHours( dre[5] );
-								date.setMinutes( dre[6] );
+								date.setHours( dre[7] );
+								date.setMinutes( dre[8] );
 							}
 							else
 							{
