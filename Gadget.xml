@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<gadget>
+  <name>ToDoList Gadget</name>
+  <version>1.0.0.0</version>
+  <author name="Andre">
+    <info url="" />
+  </author>
+  <copyright>&#169; Andre Van Der Merwe.</copyright>
+  <description>ToDoList Sidebar gadget.</description>
+  <hosts>
+    <host name="sidebar">
+      <base type="HTML" apiVersion="1.0.0" src="main.html" />
+      <permissions>Full</permissions>
+      <platform minPlatformVersion="1.0" />
+    </host>
+  </hosts>
+</gadget>

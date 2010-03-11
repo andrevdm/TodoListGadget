@@ -1,0 +1,272 @@
+<html >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=Unicode" />
+        <title>TodoList</title>
+        <script type="text/jscript" language="jscript">
+				//-----------------
+				//Config
+				//-----------------
+				var m_todoFiles = ["C:\\andre\\TODO\\P-Cubed.tdl"]
+				var m_refreshMinutes = 5
+				var m_defaultTimeHour = 8
+				var m_defaultTimeMinute = 0
+				var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", "#000FF0", "#5400F3", "#BA00F6", "#F900CD", "#FC0068", "#FF0000"]
+				//-----------------
+
+				var m_day=1000*60*60*24
+				var m_today = new Date();
+
+            // Initialize the gadget.
+            function init()
+            {
+					var oBackground = document.getElementById("imgBackground");
+					oBackground.style.msInterpolationMode = "bicubic";
+					oBackground.src = "url(images/bg.png)";
+					
+					var items = new Array()
+					
+					for( var file = 0; file < m_todoFiles.length; ++file )
+					{
+						var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+						xmlDoc.async="false";
+						xmlDoc.load( m_todoFiles[ file ] );
+					
+						var nodes = xmlDoc.selectNodes("TODOLIST");
+						var oText = document.getElementById("gadgetContent");
+						
+						if( nodes.length > 0 )
+						{
+							FindTasks( xmlDoc, nodes[0], 0, items );
+						}
+						
+						xmlDoc = null
+					}
+					
+					items.sort( sortByDate );
+					
+					var tbl = document.createElement("Table");
+					//tbl.cellPadding = 0;
+					//tbl.cellSpacing = 2;
+					//tbl.border = 1;
+					tbl.style.fontSize= "10px"
+					var tblB = document.createElement("tbody");
+					
+					formatItems( tblB, items, isOld, true, formatDateAsNumberOfDays, "Overdue" )
+					formatItems( tblB, items, isToday, false, formatDate, "Today" )
+					formatItems( tblB, items, isTomorrow, false, formatDate, "Tomorrow" )
+					formatItems( tblB, items, isAfterTomorrowButInNext7Days, true, formatDateAsDayName, "7 Days" )
+					
+					tbl.appendChild(tblB);
+					oText.appendChild( tbl );
+					
+					if( m_refreshMinutes > 0 )
+					{
+						setTimeout( reloadPage,1000*60*m_refreshMinutes );
+					}
+            }
+								
+				function formatItems( tblB, items, filter, showDate, formatDate, title )
+				{
+					var headerAdded = false
+				
+					for( var i = 0; i < items.length; ++i )
+					{
+						if( !filter( items[i] ) )
+						{
+							continue;
+						}
+						
+						if( !headerAdded )
+						{
+							headerAdded = true
+							addTitle( tblB, title );
+						}
+						
+						var row = document.createElement("tr");
+						var cellDate = document.createElement("td");
+						var cellName = document.createElement("td");
+						
+						cellDate.noWrap = true;
+						cellDate.appendChild( document.createTextNode( formatDate( items[i].date ) ) );
+						cellName.appendChild( document.createTextNode( items[i].title ) );
+						
+						if( items[i].priority && (items[i].priority >= 0) && (items[i].priority <= 10) )
+						{
+							var priorityNode = document.createElement( "Span" )
+							priorityNode.innerText = " :" + items[i].priority
+							priorityNode.className = "priority"
+							priorityNode.style.color = m_priorityColours[ items[i].priority ]
+							cellName.appendChild( priorityNode );
+						}
+						
+						if( showDate )
+						{
+							//cellDate.width=68
+							cellName.width="100%"
+							row.appendChild(cellDate);
+						}
+						else
+						{
+							cellName.colSpan = 2;
+						}
+						
+						row.appendChild(cellName);
+						tblB.appendChild(row);					
+					}
+				}
+				
+				function addTitle( tblB, title )
+				{
+					var row = document.createElement("tr");
+					var cell = document.createElement("th");
+					cell.colSpan = 2;
+					cell.align = "center"
+					cell.appendChild( document.createTextNode( title ) );
+					row.appendChild(cell);
+					tblB.appendChild(row);															
+				}
+				
+				function isOld( d )
+				{
+					return dateDiff(d.date) < 0;
+				}
+				
+				function isToday( d )
+				{
+					var diff = dateDiff(d.date)
+					return (diff>= 0) && (diff < 1)
+				}
+
+				function isTomorrow( d )
+				{
+					var diff = dateDiff(d.date)
+					return (diff>= 1) && (diff < 2)
+				}
+
+				function isAfterTomorrowButInNext7Days( d )
+				{
+					var diff = dateDiff(d.date);
+					return (diff >= 2) && (diff < 7)
+				}
+				
+				function dateDiff( x )
+				{
+					return (x.getTime() - m_today.getTime()) / m_day
+				}				
+				
+				function sortByDate( x, y )
+				{
+					var compare = compareTo( x.date.getTime(), y.date.getTime() )
+					
+					return compare != 0 ? compare : -compareTo( x.priority, y.priority );
+				}
+				
+				function compareTo( x, y )
+				{
+					return (x < y) ? -1 : ((x > y) ? 1  : 0);
+				}
+				
+				function formatDate( d )
+				{
+					return d.getYear() + "-" + (d.getMonth() < 9 ? "0" : "") +  (d.getMonth()  + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") +  d.getMinutes()
+				}
+
+				function formatDateAsDayName( d )
+				{
+					var days = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
+					return days[ d.getDay() ]
+				}
+				
+				function formatDateAsNumberOfDays( d )
+				{
+					var days = dateDiff( d )
+					return Math.round( days )
+				}
+				
+				function FindTasks( xmlDoc, parent, level, items )
+				{
+					var nodes = parent.selectNodes("TASK");
+
+					for( var i = 0; i < nodes.length; ++i )
+					{
+						var n = nodes[i];
+						
+						if( n.getAttributeNode( "DUEDATE" ) != null )
+						{
+							var percent = parseInt( n.getAttributeNode( "PERCENTDONE" ).value )
+							
+							if( percent >= 100 )
+							{
+								continue;
+							}
+						
+							var dateStr = n.getAttributeNode( "DUEDATESTRING" ).value
+							
+							//2010-03-11 15:00
+							var dre = dateStr.match( /^(\d\d\d\d)-(\d\d)-(\d\d)( (\d\d):(\d\d))?/i )
+							
+							var date = new Date();
+							date.setFullYear( dre[1] );
+							date.setMonth( dre[2] - 1 );
+							date.setDate( dre[3] );
+							
+							if( dre[4] != "" )
+							{
+								date.setHours( dre[5] );
+								date.setMinutes( dre[6] );
+							}
+							else
+							{
+								date.setHours( m_defaultTimeHour );
+								date.setMinutes( m_defaultTimeMinute );
+							}
+							
+							date.setSeconds( 0 )
+							
+							items[items.length] = {
+																date:date, 
+																title:n.getAttributeNode( "TITLE" ).value, 
+																id:n.getAttributeNode( "ID" ).value, 
+																priority:parseInt(n.getAttributeNode( "PRIORITY" ).value)
+															  }  
+						}
+						
+						FindTasks( xmlDoc, n, level + 1, items );
+					}
+				}
+				
+				function reloadPage()
+				{
+					location = window.location
+				}
+        </script>
+        <style type="text/css">
+			  body
+			  {
+					margin: 0;
+					width: 250px;
+					height: 380px;
+					font-family: verdana;
+				  overflow-y:scroll;
+				  overflow-x:hidden;
+			  }
+			  #gadgetContent
+			  {
+					margin: 0px;
+					width: 230px;
+					vertical-align: middle;
+					text-align: center;
+			  }
+			  
+			td { border: solid; vertical-align: middle; padding: 0px; border-color: #a0a0a0; border-width=1px  }
+			th { padding-top: 10px; }
+
+        </style>
+    </head>
+	
+    <body onload="init()" onDblClick="reloadPage()">
+        <g:background id="imgBackground">
+            <span id="gadgetContent" ></span> 
+		</g:background>
+    </body>
+</html>
