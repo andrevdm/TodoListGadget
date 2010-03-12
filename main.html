@@ -1,4 +1,4 @@
-<html >
+﻿<html >
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=Unicode" />
         <title>TodoList</title>
@@ -14,14 +14,20 @@
 				//-----------------
 
 				var m_day=1000*60*60*24
-				var m_today = new Date();
-
+				var m_today = new Date();				
+				var m_selectedItem = null
+				System.Gadget.Flyout.onShow = OnShowFlyout;
+				System.Gadget.Flyout.onHide = OnHideFlyout;
+				
+				
             // Initialize the gadget.
             function init()
             {
 					var oBackground = document.getElementById("imgBackground");
 					oBackground.style.msInterpolationMode = "bicubic";
 					oBackground.src = "url(images/bg.png)";
+					
+					System.Gadget.Flyout.file = "details.html";
 					
 					var items = new Array()
 					
@@ -86,6 +92,10 @@
 						var cellDate = document.createElement("td");
 						var cellName = document.createElement("td");
 						
+						row.id = "row_date_" + items[i].id
+						cellDate.id = "cell_date_" + items[i].id
+						cellName.id = "cell_name_" + items[i].id
+						
 						cellDate.noWrap = true;
 						cellDate.appendChild( document.createTextNode( formatDate( items[i].date ) ) );
 						cellName.appendChild( document.createTextNode( items[i].title ) );
@@ -110,18 +120,91 @@
 							cellName.colSpan = 2;
 						}
 						
-						cellName.title = 
-							items[i].title + "\r\n" +
-							"ID: " + items[i].id + "\r\n" +
-							"Priority: " + items[i].priority + "\r\n" +
-							"Percent: " + items[i].percentDone + "%\r\n" +
-							((items[i].comments == "") ? "" : ("-----------------\r\n" + items[i].comments))
+						cellName.title = FormatItemText( items[i] )
+						
+						row.onmouseover = OnMouseOverRow
+						row.onmouseout = OnMouseOutRow
+						row.item = items[i]
 							
-						
-						
 						row.appendChild(cellName);
 						tblB.appendChild(row);					
 					}
+				}
+				
+				function FormatItemText( item )
+				{
+					return item.title + "\r\n" +
+					"-----------------\r\n" +
+					"ID: " + item.id + "\r\n" +
+					"Priority: " + item.priority + "\r\n" +
+					"Percent: " + item.percentDone + "%\r\n" +
+					((item.comments == "") ? "" : ("-----------------\r\n" + item.comments))
+				}
+				
+				function OnShowFlyout()
+				{
+				}
+				
+				function OnHideFlyout()
+				{				
+					//alert( "OnHideFlyout" );
+				}
+				
+				function findAncestor( o, type )
+				{
+					if( o == null )
+					{
+						return null;
+					}
+				
+					if( o.nodeName == type )
+					{
+						return o
+					}
+					
+					return findAncestor( o.parentNode, type )
+				}
+				
+				function OnMouseOverRow()
+				{
+					o = findAncestor( window.event.srcElement, "TR" )
+					
+					try
+					{
+						if( o )
+						{
+							o.className = "selectedRow"
+							m_selectedItem = o.item
+							
+							if( !System.Gadget.Flyout.show )
+							{
+								System.Gadget.Flyout.show = true;
+							}
+							
+							var doc = System.Gadget.Flyout.document
+							//alert( "OnShowFlyout doc == null: " + (doc == null) );
+							var div = doc.getElementById( "mainContent" )
+							//alert( "OnShowFlyout div == null: " + (div == null) );
+							
+							div.innerText = FormatItemText( m_selectedItem )
+						}
+					}
+					catch( ex )
+					{
+						alert( ex.message )
+					}						
+				}
+				
+				function OnMouseOutRow()
+				{
+					o = findAncestor( window.event.srcElement, "TR" )
+					
+					if( o )
+					{
+						o.className = ""
+					}
+					
+					m_selectedItem = null
 				}
 				
 				function addTitle( tblB, title )
@@ -267,27 +350,43 @@
 				{
 					location = window.location
 				}
+				
+				function isDefined(variable)
+				{
+					return (!(!(document.getElementById(variable))))
+				}
+
+				function alert( s )
+				{
+					System.Debug.outputString( s ); 
+				}
         </script>
         <style type="text/css">
-			  body
-			  {
-					margin: 0;
-					width: 250px;
-					height: 380px;
-					font-family: verdana;
-				  overflow-y:scroll;
-				  overflow-x:hidden;
-			  }
-			  #gadgetContent
-			  {
-					margin: 0px;
-					width: 230px;
-					vertical-align: middle;
-					text-align: center;
-			  }
-			  
+			body
+			{
+				margin: 0;
+				width: 250px;
+				height: 380px;
+				font-family: verdana;
+				overflow-y:scroll;
+				overflow-x:hidden;
+			}
+			
+			#gadgetContent
+			{
+				margin: 0px;
+				width: 230px;
+				vertical-align: middle;
+				text-align: center;
+			}
+
 			td { border: solid; vertical-align: middle; padding: 0px; border-color: #a0a0a0; border-width=1px  }
 			th { padding-top: 10px; }
+			
+			.selectedRow
+			{
+				background-color: yellow;
+			}
 
         </style>
     </head>
