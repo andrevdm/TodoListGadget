@@ -6,7 +6,7 @@
 				//-----------------
 				//Config
 				//-----------------
-				var m_todoFiles = ["C:\\andre\\TODO\\P-Cubed.tdl"]
+				var m_todoFiles = new Array();
 				var m_refreshMinutes = 5
 				var m_defaultTimeHour = 8
 				var m_defaultTimeMinute = 0
@@ -16,8 +16,10 @@
 				var m_day=1000*60*60*24
 				var m_today = new Date();				
 				var m_selectedItem = null
+				
 				System.Gadget.Flyout.onShow = OnShowFlyout;
 				System.Gadget.Flyout.onHide = OnHideFlyout;
+				System.Gadget.onSettingsClosed = OnSettingsClosed;
 				
 				
             // Initialize the gadget.
@@ -27,7 +29,10 @@
 					oBackground.style.msInterpolationMode = "bicubic";
 					oBackground.src = "url(images/bg.png)";
 					
+					ReadConfig()
+					
 					System.Gadget.Flyout.file = "details.html";
+					System.Gadget.settingsUI = "settings.html";
 					
 					var items = new Array()
 					
@@ -139,6 +144,22 @@
 					"Priority: " + item.priority + "\r\n" +
 					"Percent: " + item.percentDone + "%\r\n" +
 					((item.comments == "") ? "" : ("-----------------\r\n" + item.comments))
+				}
+				
+				function ReadConfig()
+				{
+					var files = System.Gadget.Settings.read( "todoFiles" )
+					
+					var items = files.split( "\r\n" )
+					m_todoFiles = new Array();
+					
+					for( var i = 0; i < items.length; ++i )
+					{
+						if( items[i] != "" )
+						{
+							m_todoFiles[ m_todoFiles.length ] = items[ i ];
+						}
+					}
 				}
 				
 				function OnShowFlyout()
