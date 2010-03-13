@@ -1,0 +1,39 @@
+body
+{
+	margin: 0;
+	width: 250px;
+	height: 380px;
+	#font-family: verdana;
+	overflow-y:scroll;
+	overflow-x:hidden;
+	
+	font: 9px "Trebuchet MS", sans-serif;
+}
+
+#gadgetContent
+{
+	margin: 0px;
+	width: 230px;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.customFooter
+{
+	margin: 0px;
+	color: white;
+	background-color: #606060;
+}
+
+#statusBar
+{
+	margin: 2px;
+}
+
+xxtd { border: solid; vertical-align: middle; padding: 0px; border-color: #a0a0a0; border-width=1px  }
+xxth { padding-top: 10px; }
+
+.selectedRow
+{
+	background-color: yellow;
+}

@@ -2,7 +2,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=Unicode" />
         <title>TodoList</title>
+		<link type="text/css" href="jqueryui/css/ui-lightness/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="jquery-1.4.1.js"></script>
+		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
         <script type="text/jscript" language="jscript">
 				//-----------------
 				//Config
@@ -168,7 +170,7 @@
 				
 				function OnHideFlyout()
 				{				
-					//alert( "OnHideFlyout" );
+					//debug( "OnHideFlyout" );
 				}
 				
 				function findAncestor( o, type )
@@ -203,16 +205,16 @@
 							}
 							
 							var doc = System.Gadget.Flyout.document
-							//alert( "OnShowFlyout doc == null: " + (doc == null) );
+							//debug( "OnShowFlyout doc == null: " + (doc == null) );
 							var div = doc.getElementById( "mainContent" )
-							//alert( "OnShowFlyout div == null: " + (div == null) );
+							//debug( "OnShowFlyout div == null: " + (div == null) );
 							
 							div.innerText = FormatItemText( m_selectedItem )
 						}
 					}
 					catch( ex )
 					{
-						alert( ex.message )
+						debug( ex.message )
 					}						
 				}
 				
@@ -382,7 +384,7 @@
 					return (!(!(document.getElementById(variable))))
 				}
 
-				function alert( s )
+				function debug( s )
 				{
 					System.Debug.outputString( s ); 
 				}

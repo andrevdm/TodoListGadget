@@ -1,0 +1,75 @@
+﻿<html >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=Unicode" />
+        <title>TodoList</title>
+		<link type="text/css" href="jqueryui/css/ui-lightness/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />	
+		<link type="text/css" href="stickyFooter.css" rel="stylesheet" />	
+		<link type="text/css" href="todo.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jquery-1.4.1.js"></script>
+		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
+		<script type="text/javascript" src="Gadget.js"></script>
+		<script type="text/javascript" src="todoParser.js"></script>
+		<script type="text/javascript">
+			//-----------------
+			//Config
+			//-----------------
+			var m_todoFiles = new Array();
+			var m_refreshMinutes = 5
+			var m_defaultTimeHour = 8
+			var m_defaultTimeMinute = 0
+			var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", "#000FF0", "#5400F3", "#BA00F6", "#F900CD", "#FC0068", "#FF0000"]
+			//-----------------		
+		
+			$(document).ready(function()
+			{
+				$('#tabs').tabs();
+				
+				//Browser hacks to emulate gadgets
+				System = new Object();
+				System.Debug = new Object();
+				System.Debug.outputString = alert
+				//
+				
+			});
+			
+			function Init()
+			{
+				var files = TodoParser.ParseFiles( ["C:\\temp\\a.xml"] )
+			}
+		</script>
+    </head>
+	
+    <body onload="Init()" onDblClick="reloadPage()">
+        <g:background id="imgBackground">
+			<div id="wrap">
+				<div id="main" class="clearfix">
+					<!--
+					<div id="header">
+					</div>				
+					-->
+					
+					<div id="tabs">
+						<ul>
+							<li><a href="#tabs-all">All</a></li>
+							<li><a href="#tabs-project">Project</a></li>
+						</ul>
+						<div id="tabs-all">
+							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+						</div>
+						
+						<div id="tabs-project">
+							Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="footer" class="customFooter">
+				<div id="statusBar">
+					footer
+				</div>
+			</div>
+		  
+		</g:background>		
+    </body>
+</html>

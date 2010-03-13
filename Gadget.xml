@@ -9,7 +9,8 @@
   <description>ToDoList Sidebar gadget.</description>
   <hosts>
     <host name="sidebar">
-      <base type="HTML" apiVersion="1.0.0" src="main.html" />
+      <!--<base type="HTML" apiVersion="1.0.0" src="main.html" />-->
+      <base type="HTML" apiVersion="1.0.0" src="test.html" />
       <permissions>Full</permissions>
       <platform minPlatformVersion="1.0" />
     </host>
