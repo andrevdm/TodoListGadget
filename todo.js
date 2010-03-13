@@ -1,3 +1,13 @@
+//-----------------
+//Config
+//-----------------
+var m_todoFiles = new Array();
+var m_refreshMinutes = 5
+var m_defaultTimeHour = 8
+var m_defaultTimeMinute = 0
+var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", "#000FF0", "#5400F3", "#BA00F6", "#F900CD", "#FC0068", "#FF0000"]
+//-----------------		
+
 var m_day=1000*60*60*24
 var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -31,6 +41,125 @@ var m_sections =
 	}
 ]	
 
+$(document).ready(function()
+{
+	$('#tabs').tabs();
+	
+	//Browser hacks to emulate gadgets
+	//~ System = new Object();
+	//~ System.Debug = new Object();
+	//~ System.Debug.outputString = alert
+	//
+	LoadPage();
+});
+
+function LoadProjectAccordion()
+{
+	var menu = document.getElementById( "accMenu" );
+	
+	/*for( var i = 0; i < 5; ++i )
+	{
+		var item = document.createElement( "div" );
+		item.className = "acc-menu-item"
+		
+		var hdr = document.createElement( "div" );
+		hdr.className = "acc-menu-hdr";
+		item.appendChild( hdr );
+		hdr.innerText = "hdr" + i;
+		
+		var ctc = document.createElement( "div" );
+		ctc.className = "acc-menu-ctc";
+		item.appendChild( ctc );
+		ctc.innerText = "ctc" + i;
+		
+		menu.appendChild( item );
+	}*/
+	
+	//~ menu.innerHTML += "<div class='acc-menu-item'><div class='acc-menu-hdr'>menu1</div><div class='acc-menu-ctc'>content1</div></div>"
+	//~ menu.innerHTML += "<div class='acc-menu-item'><div class='acc-menu-hdr'>menu1</div><div class='acc-menu-ctc'>content1</div></div>"
+	
+	$('.acc-menu-ctc').hide();
+	$('.acc-menu-ctc:first').show();
+	$('.acc-menu-hdr').click(
+		function() 
+		{
+			var checkElement = $(this).next();
+			
+			if( checkElement.is('div') )
+			{
+				if( checkElement.is(':visible') )
+				{
+					return false;
+				}
+				else
+				{
+				  $('#.acc-menu-ctc:visible').slideUp('normal');
+				  checkElement.slideDown('normal');
+				  return false;
+				}
+			}
+		} 
+	);
+}
+
+function LoadPage()
+{
+	var files = TodoParser.ParseFiles( ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"] )
+	
+	var projectAll = document.getElementById( "tabs-all" )
+	var projectTab = document.getElementById( "tabs-project" )
+	
+	var output = FormatAllSections( m_sections, files )
+	$('#tabs-all').html(output);
+	
+	output = FormatSectionsByProject( m_sections, files )
+	$('#accMenu').html(output);
+	
+	LoadProjectAccordion();	
+}
+
+function FormatSectionsByProject( sections, files )
+{
+	var html = $( "#ItemsByProject" ).parseTemplate( {sections : sections, files : files} );
+	return html
+}
+
+function FormatSectionForFile( sections, file )
+{
+	var files = []
+	files[ 0 ] = file
+	return FormatAllSections( sections, new TodoFileCollection( files ) );
+}
+
+function FormatAllSections( sections, files )
+{
+	var html = ""
+
+	for( var s in sections )
+	{
+		var section = sections[s];
+		var filter = function( item ){ return SelectItemsWithDueDate( item ) && section.filter( item ) };
+		var items = files.SelectItems( filter );
+		items.sort( SortByDueDate );
+		
+		if( items.length == 0 )
+		{
+			continue;
+		}
+		
+		html += FormatHeader( section );
+		html += $( section.itemTemplate ).parseTemplate( {section:section, items : items} );
+	}
+	
+	return html;
+}
+
+function FormatHeader( section )
+{
+	var html = $( section.headerTemplate ).parseTemplate( {section:section} );
+	return html
+}
+	
 function IsOld( item )
 {
 	return (item.dueDate < new Date()) || (dateDiff(item.dueDate) < 0);

@@ -7,78 +7,17 @@
 		<link type="text/css" href="todo.css" rel="stylesheet" />	
 		<script type="text/javascript" src="jquery-1.4.1.js"></script>
 		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
+		
 		<script type="text/javascript" src="Gadget.js"></script>
 		<script type="text/javascript" src="todoParser.js"></script>
 		<script type="text/javascript" src="dataTemplate.js"></script>
 		<script type="text/javascript" src="todo.js"></script>
-		<script type="text/javascript">
-			//-----------------
-			//Config
-			//-----------------
-			var m_todoFiles = new Array();
-			var m_refreshMinutes = 5
-			var m_defaultTimeHour = 8
-			var m_defaultTimeMinute = 0
-			var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", "#000FF0", "#5400F3", "#BA00F6", "#F900CD", "#FC0068", "#FF0000"]
-			//-----------------		
-		
-			$(document).ready(function()
-			{
-				$('#tabs').tabs();
-				
-				//Browser hacks to emulate gadgets
-				System = new Object();
-				System.Debug = new Object();
-				System.Debug.outputString = alert
-				//
-			});
-			
-			function Init()
-			{
-				var files = TodoParser.ParseFiles( ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"] )
-				
-				var projectAll = document.getElementById( "tabs-all" )
-				var projectTab = document.getElementById( "tabs-project" )
-				
-				var output = FormatSections( m_sections, files )
-				$('#tabs-all').html(output);
-			}
-			
-			function FormatSections( sections, files )
-			{
-				var html = ""
-			
-				for( var s in sections )
-				{
-					var section = sections[s];
-					var filter = function( item ){ return SelectItemsWithDueDate( item ) && section.filter( item ) };
-					var items = files.SelectItems( filter );
-					items.sort( SortByDueDate );
-					
-					if( items.length == 0 )
-					{
-						continue;
-					}
-					
-					html += FormatHeader( section );
-					html += $( section.itemTemplate ).parseTemplate( {section:section, items : items} );
-				}
-				
-				return html;
-			}
-			
-			function FormatHeader( section )
-			{
-				var html = $( section.headerTemplate ).parseTemplate( {section:section} );
-				return html
-			}
-		</script>
 		
 		<script id="HeaderTemplate" type="text/html">
 			<div class="sectionTitle"><#= section.title #></div>
 		</script>
 		
-		<script id="ItemsTwoColumn" type="text/html">
+		<script id="ItemsTwoColumn" type="text/html" src="ItemsTwoColumn.html">
 			<table>
 				<#
 				for( var i in items )
@@ -100,14 +39,35 @@
 			for( var i in items )
 			{
 				var item = items[ i ];
-				#><#= item.title#><br/><#
+				#><div class="itemListSingleItem"><#= item.title#></div><#
 			}
 			#>
 		</script>
 		
+		<script id="ItemsByProject" type="text/html">
+			<div class="acc-menu" id="accMenu">
+			<#
+			for( var f in files.items )
+			{
+				var file = files.items[ f ];
+				#>
+					<div class="acc-menu-item">
+						<div class="acc-menu-hdr">
+							<#= file.path#>
+						</div>
+						<div class="acc-menu-ctc">
+							<#= FormatSectionForFile( sections, file )#>
+						</div>
+					</div>
+				<#
+			}
+			#>
+			</div>
+		</script>
+		
     </head>
 	
-    <body onload="Init()" onDblClick="reloadPage()">
+    <body onDblClick="LoadPage()">
         <g:background id="imgBackground">
 			<div id="wrap">
 				<div id="main" class="clearfix">
@@ -125,6 +85,22 @@
 						</div>
 						
 						<div id="tabs-project">
+							<div class="acc-menu" id="accMenu">
+							<!--
+								<div class="acc-menu-item">
+									<div class="acc-menu-hdr">menu1</div>
+									<div class="acc-menu-ctc">content1</div>
+								</div>
+								<div class="acc-menu-item">
+									<div class="acc-menu-hdr">menu2</div>
+									<div class="acc-menu-ctc">content2</div>
+								</div>
+								<div class="acc-menu-item">
+									<div class="acc-menu-hdr">menu3</div>
+									<div class="acc-menu-ctc">content3</div>
+								</div>
+								-->
+							</div>
 						</div>
 					</div>
 				</div>
