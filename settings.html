@@ -7,7 +7,7 @@
 			{
 				margin: 0;
 				width: 650px;
-				height: 200px;
+				height: 300px;
 				font-family: verdana;
 				overflow-y:scroll;
 				overflow-x:hidden;
@@ -26,7 +26,7 @@
 					var todoFiles = System.Gadget.Settings.read("todoFiles")
 				
 					var main = document.getElementById( "todoFiles" )
-					main.value = todoFiles
+					document.getElementById( "height" ).value = System.Gadget.document.body.style.fontFamily
 				}
 				
 				function OnSettingsClosed( event )
@@ -62,8 +62,7 @@
     </head>
     <body onload="init()">
 		<div id="mainContent">
-			Files:<br/>
-			<textarea id="todoFiles" cols="35" rows="5"></textarea>
+			<textarea id="todoFiles" cols="35" rows="5"></textarea><br/>
 		</div>
     </body>
 </html>

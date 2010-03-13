@@ -1,4 +1,4 @@
-REM ~ @echo off
+@echo off
 set dest=%USERPROFILE%\AppData\Local\Microsoft\Windows Sidebar\Gadgets\TodoList.gadget\
 
 if not exist %dest% md %dest%

@@ -2,6 +2,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=Unicode" />
         <title>TodoList</title>
+		<script type="text/javascript" src="jquery-1.4.1.js"></script>
         <script type="text/jscript" language="jscript">
 				//-----------------
 				//Config
@@ -19,7 +20,6 @@
 				
 				System.Gadget.Flyout.onShow = OnShowFlyout;
 				System.Gadget.Flyout.onHide = OnHideFlyout;
-				System.Gadget.onSettingsClosed = OnSettingsClosed;
 				
 				
             // Initialize the gadget.
@@ -34,6 +34,7 @@
 					System.Gadget.Flyout.file = "details.html";
 					System.Gadget.settingsUI = "settings.html";
 					
+					var oText = document.getElementById("gadgetContent");
 					var items = new Array()
 					
 					for( var file = 0; file < m_todoFiles.length; ++file )
@@ -43,7 +44,6 @@
 						xmlDoc.load( m_todoFiles[ file ] );
 					
 						var nodes = xmlDoc.selectNodes("TODOLIST");
-						var oText = document.getElementById("gadgetContent");
 						
 						if( nodes.length > 0 )
 						{
