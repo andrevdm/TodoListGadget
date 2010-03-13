@@ -5,8 +5,14 @@ body
 	height: 380px;
 	#font-family: verdana;
 	overflow-y:scroll;
-	overflow-x:hidden;
-	
+	overflow-x:hidden;	
+	font: 9px "Trebuchet MS", sans-serif;
+}
+
+table
+{
+	margin: 0;
+	#font-family: verdana;
 	font: 9px "Trebuchet MS", sans-serif;
 }
 
@@ -30,8 +36,15 @@ body
 	margin: 2px;
 }
 
-xxtd { border: solid; vertical-align: middle; padding: 0px; border-color: #a0a0a0; border-width=1px  }
-xxth { padding-top: 10px; }
+.sectionTitle
+{
+	padding-top: 10px;
+	font: 11px;
+	font-weight: bold; 
+	color: blue;
+}
+
+.tdForTwoCol { border: solid; vertical-align: middle; padding: 0px; border-color: #a0a0a0; border-width=1px  }
 
 .selectedRow
 {
