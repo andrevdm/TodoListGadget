@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
 		<script type="text/javascript" src="Gadget.js"></script>
 		<script type="text/javascript" src="todoParser.js"></script>
+		<script type="text/javascript" src="todo.js"></script>
 		<script type="text/javascript">
 			//-----------------
 			//Config
@@ -34,8 +35,34 @@
 			
 			function Init()
 			{
-				var files = TodoParser.ParseFiles( ["C:\\temp\\a.xml"] )
+				var files = TodoParser.ParseFiles( ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"] )
+				
+				var projectAll = document.getElementById( "tabs-all" )
+				var projectTab = document.getElementById( "tabs-project" )
+				
+				//~ for( var i = 0; i < files.items.length; ++i )
+				//~ {
+					//~ var f = files.items[ i ]
+					
+					//~ projectAll.innerHTML += f.path + "<br/>"
+					
+					//~ for( var t = 0; t < f.items.length; ++t )
+					//~ {
+						//~ var todo = f.items[t]
+						//~ projectAll.innerHTML += "---" + todo.title + " - " + todo.date + "<br/>"
+					//~ }
+				//~ }
+				
+				projectAll.innerHTML += "-------------------------<br/>"
+				
+				var items = files.SelectItems( SelectItemsWithDueDate )
+				//~ var items = files.SelectItems( SelectAll )
+				for( var i = 0; i < items.length; ++i )
+				{
+					projectAll.innerHTML += items[i].title + " - "  + "<br/>" //TODO + items[i].file.path
+				}
 			}
+			
 		</script>
     </head>
 	
@@ -53,12 +80,10 @@
 							<li><a href="#tabs-all">All</a></li>
 							<li><a href="#tabs-project">Project</a></li>
 						</ul>
-						<div id="tabs-all">
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+						<div id="tabs-all" style="height:100%; background-color:red">
 						</div>
 						
 						<div id="tabs-project">
-							Nam dui erat, auctor a, dignissim quis, sollicitudin eu, felis. Pellentesque nisi urna, interdum eget, sagittis et, consequat vestibulum, lacus. Mauris porttitor ullamcorper augue.
 						</div>
 					</div>
 				</div>

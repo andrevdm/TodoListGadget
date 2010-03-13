@@ -6,21 +6,17 @@ TodoParser =
 			
 		for( var i = 0; i < paths.length; ++i )
 		{
-			var info = 
-			{ 
-				path : paths[ i ], 
-				items : new Array()
-			}
+			var info = new TodoFile( paths[ i ] )
 			
-			files[ paths[ i ] ] = info
+			files[ files.length ] = info
 			
-			this.ParseFile( paths[i], info.items )
+			this.ParseFile( paths[i], info.items, info )
 		}
 		
-		return files
+		return new TodoFileCollection( files )
 	},
 	
-	ParseFile : function( path, items )
+	ParseFile : function( path, items, ownerFile )
 	{
 		var xmlDoc = new ActiveXObject( "Microsoft.XMLDOM" );
 		xmlDoc.async="false";
@@ -30,68 +26,126 @@ TodoParser =
 		
 		if( nodes.length > 0 )
 		{
-			this.FindTasks( xmlDoc, nodes[0], 0, items );
+			this.FindTasks( xmlDoc, nodes[0], 0, items, ownerFile );
 		}
 		
 		xmlDoc = null	
 	},
 	
-	FindTasks : function( xmlDoc, parent, level, items )
+	FindTasks : function( xmlDoc, parent, level, items, ownerFile )
 	{
 		var nodes = parent.selectNodes("TASK");
 
 		for( var i = 0; i < nodes.length; ++i )
 		{
-			var n = nodes[i];
+			items[ items.length ] = new TodoItem( nodes[i], ownerFile ) 
 			
-			if( n.getAttributeNode( "DUEDATE" ) != null )
-			{
-				var percent = 0
-				
-				if( n.getAttributeNode( "PERCENTDONE" ) != null )
-				{
-					percent = parseInt( n.getAttributeNode( "PERCENTDONE" ).value )
-				}
+			this.FindTasks( xmlDoc, nodes[i], level + 1, items );
+		}
+	}
+}
+
+function TodoItem( node, file )
+{
+	this.type = "TodoItem"
+	this.node = node
+	this.file = file
+			
+	this.percent = 0
+	if( node.getAttributeNode( "PERCENTDONE" ) != null )
+	{
+		this.percent = parseInt( node.getAttributeNode( "PERCENTDONE" ).value )
+	}
+
+	this.dueDate = null
+	if( node.getAttributeNode( "DUEDATE" ) != null )
+	{
+		this.dueDate = ParseDate( node.getAttributeNode( "DUEDATESTRING" ).value )
+	}
 	
-				items[ items.length ] = 
+	this.title = node.getAttributeNode( "TITLE" ).value
+	this.id = node.getAttributeNode( "ID" ).value
+	this.priority = parseInt(node.getAttributeNode( "PRIORITY" ).value)
+	this.createDate = ParseDate( node.getAttributeNode( "CREATIONDATESTRING" ).value )
+	this.comments = node.getAttributeNode( "COMMENTS" ) != null ? node.getAttributeNode( "COMMENTS" ).value : ""
+}
+
+function TodoFile( path )
+{
+	this.type = "TodoFile"
+	this.path = path
+	this.items = []	
+	
+	this.SelectItems = function( filter )
+	{
+		var filtered = [];
+		
+		for( var i = 0; i < this.items.length; ++i )
+		{
+			var item = this.items[ i ];
+			
+			if( filter( item ) )
+			{
+				filtered[ filtered.length ] = item;
+			}
+		}
+		
+		return filtered;
+	}	
+}
+
+function TodoFileCollection( files )
+{
+	this.type = "TodoFileCollection"
+	this.items = files
+	
+	this.SelectItems = function( filter )
+	{
+		var filtered = [];
+		
+		for( var f = 0; f < this.items.length; ++f )
+		{
+			var file = this.items[f];
+			
+			var filteredForFile = file.SelectItems( filter )
+			for( var i = 0; i < filteredForFile.length; ++i )
+			{
+				var item = filteredForFile[ i ];
+				
+				if( filter( item ) )
 				{
-					date : this.ParseDate( n.getAttributeNode( "DUEDATESTRING" ).value ), 
-					title : n.getAttributeNode( "TITLE" ).value, 
-					id : n.getAttributeNode( "ID" ).value, 
-					priority : parseInt(n.getAttributeNode( "PRIORITY" ).value),
-					percentDone : percent,
-					createDate : this.ParseDate( n.getAttributeNode( "CREATIONDATESTRING" ).value ),
-					comments : n.getAttributeNode( "COMMENTS" ) != null ? n.getAttributeNode( "COMMENTS" ).value : ""
+					filtered[ filtered.length ] = item;
 				}
 			}
-			
-			this.FindTasks( xmlDoc, n, level + 1, items );
-		}
-	},
-	
-	ParseDate : function( dateStr )
-	{
-		//2010-03-11 15:00
-		var dre = dateStr.match( /^(\d\d\d\d)(-|\/)(\d\d)(-|\/)(\d\d)( (\d\d):(\d\d))?/i )
-		
-		var date = new Date();
-		date.setFullYear( dre[1] );
-		date.setMonth( dre[3] - 1 );
-		date.setDate( dre[5] );
-		
-		if( dre[6] != "" )
-		{
-			date.setHours( dre[7] );
-			date.setMinutes( dre[8] );
-		}
-		else
-		{
-			date.setHours( m_defaultTimeHour );
-			date.setMinutes( m_defaultTimeMinute );
 		}
 		
-		date.setSeconds( 0 )
-	
-		return date
+		return filtered;
 	}
+}
+
+
+function ParseDate( dateStr )
+{
+	//2010-03-11 15:00
+	var dre = dateStr.match( /^(\d\d\d\d)(-|\/)(\d\d)(-|\/)(\d\d)( (\d\d):(\d\d))?/i )
+	
+	var date = new Date();
+	date.setFullYear( dre[1] );
+	date.setMonth( dre[3] - 1 );
+	date.setDate( dre[5] );
+	
+	if( dre[6] != "" )
+	{
+		date.setHours( dre[7] );
+		date.setMinutes( dre[8] );
+	}
+	else
+	{
+		date.setHours( m_defaultTimeHour );
+		date.setMinutes( m_defaultTimeMinute );
+	}
+	
+	date.setSeconds( 0 )
+
+	return date
 }
