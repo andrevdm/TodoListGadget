@@ -12,6 +12,7 @@ var m_day=1000*60*60*24
 var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var m_todoFiles = []
 var m_files = null
+var m_log = []
 
 var m_sections = 
 [
@@ -43,6 +44,13 @@ var m_sections =
 	}
 ]	
 
+//TODO not working
+$(window).error(function() 
+{
+	Log( {level:"error", message:"exception"} )
+	return true;
+});
+	
 $(document).ready(function()
 {
 	$('#tabs').tabs();
@@ -51,7 +59,10 @@ $(document).ready(function()
 	{
 		setTimeout( LoadPage, 1000 * 60 * m_refreshMinutes );
 	}	
+	
+	Log( {level:"info", message:"Loaded: " + (new Date())} )
 });
+
 
 function InitPage()
 {
@@ -383,4 +394,10 @@ function GetHierarchy( node, items )
 			items[ items.length ] = node.getAttributeNode( "TITLE" ).value 
 		}
 	}
+}
+
+function Log( log )
+{
+	m_log[ m_log.length ] = log
+	document.getElementById("logContent").innerHTML += $("#LogItemTemplate").parseTemplate( log )
 }

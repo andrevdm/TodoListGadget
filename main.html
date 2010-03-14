@@ -87,6 +87,11 @@ Priority: <#= item.priority#>\r\n
 ---------------------------------\r\n
 <#= item.comments#></script>
 
+		<script id="LogItemTemplate" type="text/html">
+			<span class="logItem"><img src="images/<#=level#>.png" align="left"><#=message#></span>
+			<br/>
+		</script>
+
     </head>
 	
     <body _onDblClick="ReLoadPage()" onload="InitPage()">
@@ -97,6 +102,8 @@ Priority: <#= item.priority#>\r\n
 						<ul>
 							<li><a href="#tabs-all">All</a></li>
 							<li><a href="#tabs-project">Project</a></li>
+							<li><a href="#tabs-log">Log</a></li>
+							<li><a href="#tabs-todo">TODO</a></li>
 						</ul>
 						<div id="tabs-all">
 						</div>
@@ -106,6 +113,20 @@ Priority: <#= item.priority#>\r\n
 								<div class="acc-menu" id="accMenu">
 								</div>
 							</div>
+						</div>
+						<div id="tabs-project">
+						</div>
+						<div id="tabs-log">
+							<div id="logContent">
+							</div>
+						</div>
+						<div id="tabs-todo">
+							<ul>
+								<li>priority</li>
+								<li>file name from path</li>
+								<li>exception handeling</li>
+								<li>logs</li>
+							</ul>
 						</div>
 					</div>
 				</div>
