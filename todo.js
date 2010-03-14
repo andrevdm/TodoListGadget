@@ -10,6 +10,8 @@ var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", 
 
 var m_day=1000*60*60*24
 var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+var m_isGadget = false;
+var m_todoFiles = []
 
 var m_sections = 
 [
@@ -45,41 +47,34 @@ $(document).ready(function()
 {
 	$('#tabs').tabs();
 	
-	//Browser hacks to emulate gadgets
-	//~ System = new Object();
-	//~ System.Debug = new Object();
-	//~ System.Debug.outputString = alert
-	//
-	LoadPage();
+	if( m_refreshMinutes > 0 )
+	{
+		setTimeout( LoadPage, 1000*60*m_refreshMinutes );
+	}	
 });
+
+function InitPage()
+{
+	if( typeof System != "undefined" )
+	{
+		m_isGadget = true;
+		InitGadget();
+	}
+	else
+	{
+		m_todoFiles = ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"]
+	}
+	
+	LoadPage()
+}
 
 function LoadProjectAccordion()
 {
 	var menu = document.getElementById( "accMenu" );
 	
-	/*for( var i = 0; i < 5; ++i )
-	{
-		var item = document.createElement( "div" );
-		item.className = "acc-menu-item"
-		
-		var hdr = document.createElement( "div" );
-		hdr.className = "acc-menu-hdr";
-		item.appendChild( hdr );
-		hdr.innerText = "hdr" + i;
-		
-		var ctc = document.createElement( "div" );
-		ctc.className = "acc-menu-ctc";
-		item.appendChild( ctc );
-		ctc.innerText = "ctc" + i;
-		
-		menu.appendChild( item );
-	}*/
-	
-	//~ menu.innerHTML += "<div class='acc-menu-item'><div class='acc-menu-hdr'>menu1</div><div class='acc-menu-ctc'>content1</div></div>"
-	//~ menu.innerHTML += "<div class='acc-menu-item'><div class='acc-menu-hdr'>menu1</div><div class='acc-menu-ctc'>content1</div></div>"
-	
 	$('.acc-menu-ctc').hide();
 	$('.acc-menu-ctc:first').show();
+	$('.acc-menu-img:first' ).attr( "src", "images/open.png" )
 	$('.acc-menu-hdr').click(
 		function() 
 		{
@@ -87,13 +82,17 @@ function LoadProjectAccordion()
 			
 			if( checkElement.is('div') )
 			{
+				$('.acc-menu-img').attr( "src", "images/closed.png" );
+				
 				if( checkElement.is(':visible') )
 				{
+					$('.acc-menu-ctc:visible').slideUp('normal');
 					return false;
 				}
 				else
 				{
-				  $('#.acc-menu-ctc:visible').slideUp('normal');
+				  $('.acc-menu-ctc:visible').slideUp('normal');
+					$(this).children( ".acc-menu-img" ).attr( "src", "images/open.png" )
 				  checkElement.slideDown('normal');
 				  return false;
 				}
@@ -102,9 +101,16 @@ function LoadProjectAccordion()
 	);
 }
 
+function ReLoadPage()
+{
+	//LoadPage()
+	window.location = window.location
+}
+
 function LoadPage()
 {
-	var files = TodoParser.ParseFiles( ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"] )
+	$("#statusBar").html("loading");
+	var files = TodoParser.ParseFiles( m_todoFiles )
 	
 	var projectAll = document.getElementById( "tabs-all" )
 	var projectTab = document.getElementById( "tabs-project" )
@@ -116,6 +122,7 @@ function LoadPage()
 	$('#accMenu').html(output);
 	
 	LoadProjectAccordion();	
+	$("#statusBar").html("loaded");
 }
 
 function FormatSectionsByProject( sections, files )
@@ -226,5 +233,22 @@ function SortByDueDate( x, y )
 function compareTo( x, y )
 {
 	return (x < y) ? -1 : ((x > y) ? 1  : 0);
+}
+
+function formatDate( d )
+{
+	return d.getYear() + "-" + (d.getMonth() < 9 ? "0" : "") +  (d.getMonth()  + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") +  d.getMinutes()
+}
+
+function formatDateAsDayName( d )
+{
+	var days = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
+	return days[ d.getDay() ]
+}
+
+function formatDateAsNumberOfDays( d )
+{
+	var days = dateDiff( d )
+	return Math.round( days )
 }
 

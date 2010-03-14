@@ -3,425 +3,96 @@
         <meta http-equiv="Content-Type" content="text/html; charset=Unicode" />
         <title>TodoList</title>
 		<link type="text/css" href="jqueryui/css/ui-lightness/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />	
+		<link type="text/css" href="stickyFooter.css" rel="stylesheet" />	
+		<link type="text/css" href="todo.css" rel="stylesheet" />	
 		<script type="text/javascript" src="jquery-1.4.1.js"></script>
 		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
-        <script type="text/jscript" language="jscript">
-				//-----------------
-				//Config
-				//-----------------
-				var m_todoFiles = new Array();
-				var m_refreshMinutes = 5
-				var m_defaultTimeHour = 8
-				var m_defaultTimeMinute = 0
-				var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", "#000FF0", "#5400F3", "#BA00F6", "#F900CD", "#FC0068", "#FF0000"]
-				//-----------------
-
-				var m_day=1000*60*60*24
-				var m_today = new Date();				
-				var m_selectedItem = null
-				
-				System.Gadget.Flyout.onShow = OnShowFlyout;
-				System.Gadget.Flyout.onHide = OnHideFlyout;
-				
-				
-            // Initialize the gadget.
-            function init()
-            {
-					var oBackground = document.getElementById("imgBackground");
-					oBackground.style.msInterpolationMode = "bicubic";
-					oBackground.src = "url(images/bg.png)";
-					
-					ReadConfig()
-					
-					System.Gadget.Flyout.file = "details.html";
-					System.Gadget.settingsUI = "settings.html";
-					
-					var oText = document.getElementById("gadgetContent");
-					var items = new Array()
-					
-					for( var file = 0; file < m_todoFiles.length; ++file )
-					{
-						var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-						xmlDoc.async="false";
-						xmlDoc.load( m_todoFiles[ file ] );
-					
-						var nodes = xmlDoc.selectNodes("TODOLIST");
-						
-						if( nodes.length > 0 )
-						{
-							FindTasks( xmlDoc, nodes[0], 0, items );
-						}
-						
-						xmlDoc = null
-					}
-					
-					items.sort( sortByDate );
-					
-					var tbl = document.createElement("Table");
-					//tbl.cellPadding = 0;
-					//tbl.cellSpacing = 2;
-					//tbl.border = 1;
-					tbl.style.fontSize= "10px"
-					var tblB = document.createElement("tbody");
-					
-					formatItems( tblB, items, isOld, true, formatDateAsNumberOfDays, "Overdue" )
-					formatItems( tblB, items, isToday, false, formatDate, "Today" )
-					formatItems( tblB, items, isTomorrow, false, formatDate, "Tomorrow" )
-					formatItems( tblB, items, isAfterTomorrowButInNext7Days, true, formatDateAsDayName, "7 Days" )
-					
-					tbl.appendChild(tblB);
-					oText.appendChild( tbl );
-					
-					if( m_refreshMinutes > 0 )
-					{
-						setTimeout( reloadPage,1000*60*m_refreshMinutes );
-					}
-            }
-								
-				function formatItems( tblB, items, filter, showDate, formatDate, title )
+		
+		<script type="text/javascript" src="Gadget.js"></script>
+		<script type="text/javascript" src="todoParser.js"></script>
+		<script type="text/javascript" src="dataTemplate.js"></script>
+		<script type="text/javascript" src="todo.js"></script>
+		
+		<script id="HeaderTemplate" type="text/html">
+			<div class="sectionTitle"><#= section.title #></div>
+		</script>
+		
+		<script id="ItemsTwoColumn" type="text/html" src="ItemsTwoColumn.html">
+			<table>
+				<#
+				for( var i in items )
 				{
-					var headerAdded = false
-				
-					for( var i = 0; i < items.length; ++i )
-					{
-						if( !filter( items[i] ) )
-						{
-							continue;
-						}
-						
-						if( !headerAdded )
-						{
-							headerAdded = true
-							addTitle( tblB, title );
-						}
-						
-						var row = document.createElement("tr");
-						var cellDate = document.createElement("td");
-						var cellName = document.createElement("td");
-						
-						row.id = "row_date_" + items[i].id
-						cellDate.id = "cell_date_" + items[i].id
-						cellName.id = "cell_name_" + items[i].id
-						
-						cellDate.noWrap = true;
-						cellDate.appendChild( document.createTextNode( formatDate( items[i].date ) ) );
-						cellName.appendChild( document.createTextNode( items[i].title ) );
-						
-						if( items[i].priority && (items[i].priority >= 0) && (items[i].priority <= 10) )
-						{
-							var priorityNode = document.createElement( "Span" )
-							priorityNode.innerText = " :" + items[i].priority
-							priorityNode.className = "priority"
-							priorityNode.style.color = m_priorityColours[ items[i].priority ]
-							cellName.appendChild( priorityNode );
-						}
-						
-						if( showDate )
-						{
-							//cellDate.width=68
-							cellName.width="100%"
-							row.appendChild(cellDate);
-						}
-						else
-						{
-							cellName.colSpan = 2;
-						}
-						
-						cellName.title = FormatItemText( items[i] )
-						
-						row.onmouseover = OnMouseOverRow
-						row.onmouseout = OnMouseOutRow
-						row.item = items[i]
-							
-						row.appendChild(cellName);
-						tblB.appendChild(row);					
-					}
+					var item = items[ i ];
+					#>
+					<tr>
+						<td class="tdForTwoCol"><#= section.formatLeftCol( item ) #></td>
+						<td class="tdForTwoCol"><#= item.title#></td>
+					</tr>
+					<#
 				}
-				
-				function FormatItemText( item )
-				{
-					return item.title + "\r\n" +
-					"-----------------\r\n" +
-					"ID: " + item.id + "\r\n" +
-					"Priority: " + item.priority + "\r\n" +
-					"Percent: " + item.percentDone + "%\r\n" +
-					((item.comments == "") ? "" : ("-----------------\r\n" + item.comments))
-				}
-				
-				function ReadConfig()
-				{
-					var files = System.Gadget.Settings.read( "todoFiles" )
-					
-					var items = files.split( "\r\n" )
-					m_todoFiles = new Array();
-					
-					for( var i = 0; i < items.length; ++i )
-					{
-						if( items[i] != "" )
-						{
-							m_todoFiles[ m_todoFiles.length ] = items[ i ];
-						}
-					}
-				}
-				
-				function OnShowFlyout()
-				{
-				}
-				
-				function OnHideFlyout()
-				{				
-					//debug( "OnHideFlyout" );
-				}
-				
-				function findAncestor( o, type )
-				{
-					if( o == null )
-					{
-						return null;
-					}
-				
-					if( o.nodeName == type )
-					{
-						return o
-					}
-					
-					return findAncestor( o.parentNode, type )
-				}
-				
-				function OnMouseOverRow()
-				{
-					o = findAncestor( window.event.srcElement, "TR" )
-					
-					try
-					{
-						if( o )
-						{
-							o.className = "selectedRow"
-							m_selectedItem = o.item
-							
-							if( !System.Gadget.Flyout.show )
-							{
-								System.Gadget.Flyout.show = true;
-							}
-							
-							var doc = System.Gadget.Flyout.document
-							//debug( "OnShowFlyout doc == null: " + (doc == null) );
-							var div = doc.getElementById( "mainContent" )
-							//debug( "OnShowFlyout div == null: " + (div == null) );
-							
-							div.innerText = FormatItemText( m_selectedItem )
-						}
-					}
-					catch( ex )
-					{
-						debug( ex.message )
-					}						
-				}
-				
-				function OnMouseOutRow()
-				{
-					o = findAncestor( window.event.srcElement, "TR" )
-					
-					if( o )
-					{
-						o.className = ""
-					}
-					
-					m_selectedItem = null
-				}
-				
-				function addTitle( tblB, title )
-				{
-					var row = document.createElement("tr");
-					var cell = document.createElement("th");
-					cell.colSpan = 2;
-					cell.align = "center"
-					cell.appendChild( document.createTextNode( title ) );
-					row.appendChild(cell);
-					tblB.appendChild(row);															
-				}
-				
-				function isOld( d )
-				{
-					return (d.date < new Date()) || (dateDiff(d.date) < 0);
-				}
-				
-				function isToday( d )
-				{
-					if( d.date < new Date() )
-					{
-						return false;
-					}
-				
-					var diff = dateDiff(d.date)
-					return (diff>= 0) && (diff < 1)
-				}
-
-				function isTomorrow( d )
-				{
-					var diff = dateDiff(d.date)
-					return (diff>= 1) && (diff < 2)
-				}
-
-				function isAfterTomorrowButInNext7Days( d )
-				{
-					var diff = dateDiff(d.date);
-					return (diff >= 2) && (diff < 7)
-				}
-				
-				function dateDiff( x )
-				{
-					a = new Date( x )
-					a.setHours( 8 )
-					a.setMinutes( 0 )
-					a.setSeconds( 0 )
-					a.setMilliseconds( 0 )
-					
-					b = new Date()
-					b.setHours( 8 )
-					b.setMinutes( 0 )
-					b.setSeconds( 0 )
-					b.setMilliseconds( 0 )
-					
-					return (a.getTime() - b.getTime()) / m_day
-					//~ return (x.getTime() - m_today.getTime()) / m_day
-				}				
-				
-				function sortByDate( x, y )
-				{
-					var compare = compareTo( x.date.getTime(), y.date.getTime() )
-					
-					return compare != 0 ? compare : -compareTo( x.priority, y.priority );
-				}
-				
-				function compareTo( x, y )
-				{
-					return (x < y) ? -1 : ((x > y) ? 1  : 0);
-				}
-				
-				function formatDate( d )
-				{
-					return d.getYear() + "-" + (d.getMonth() < 9 ? "0" : "") +  (d.getMonth()  + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") +  d.getMinutes()
-				}
-
-				function formatDateAsDayName( d )
-				{
-					var days = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
-					return days[ d.getDay() ]
-				}
-				
-				function formatDateAsNumberOfDays( d )
-				{
-					var days = dateDiff( d )
-					return Math.round( days )
-				}
-				
-				function FindTasks( xmlDoc, parent, level, items )
-				{
-					var nodes = parent.selectNodes("TASK");
-
-					for( var i = 0; i < nodes.length; ++i )
-					{
-						var n = nodes[i];
-						
-						if( n.getAttributeNode( "DUEDATE" ) != null )
-						{
-							var percent = parseInt( n.getAttributeNode( "PERCENTDONE" ).value )
-							
-							if( percent >= 100 )
-							{
-								continue;
-							}
-						
-							items[items.length] = {
-																date:parseDate( n.getAttributeNode( "DUEDATESTRING" ).value ), 
-																title:n.getAttributeNode( "TITLE" ).value, 
-																id:n.getAttributeNode( "ID" ).value, 
-																priority:parseInt(n.getAttributeNode( "PRIORITY" ).value),
-																percentDone:n.getAttributeNode( "PERCENTDONE" ) != null ?n.getAttributeNode( "PERCENTDONE" ).value : 0,
-																createDate:parseDate( n.getAttributeNode( "CREATIONDATESTRING" ).value ),
-																comments:n.getAttributeNode( "COMMENTS" ) != null ? n.getAttributeNode( "COMMENTS" ).value : ""
-															  }
-						}
-						
-						FindTasks( xmlDoc, n, level + 1, items );
-					}
-				}
-				
-				function parseDate( dateStr )
-				{
-					//2010-03-11 15:00
-					var dre = dateStr.match( /^(\d\d\d\d)(-|\/)(\d\d)(-|\/)(\d\d)( (\d\d):(\d\d))?/i )
-					
-					var date = new Date();
-					date.setFullYear( dre[1] );
-					date.setMonth( dre[3] - 1 );
-					date.setDate( dre[5] );
-					
-					if( dre[6] != "" )
-					{
-						date.setHours( dre[7] );
-						date.setMinutes( dre[8] );
-					}
-					else
-					{
-						date.setHours( m_defaultTimeHour );
-						date.setMinutes( m_defaultTimeMinute );
-					}
-					
-					date.setSeconds( 0 )
-				
-					return date
-				}
-				
-				function reloadPage()
-				{
-					location = window.location
-				}
-				
-				function isDefined(variable)
-				{
-					return (!(!(document.getElementById(variable))))
-				}
-
-				function debug( s )
-				{
-					System.Debug.outputString( s ); 
-				}
-        </script>
-        <style type="text/css">
-			body
+				#>
+			</table>
+		</script>
+		
+		<script id="ItemsList" type="text/html">
+			<#
+			for( var i in items )
 			{
-				margin: 0;
-				width: 250px;
-				height: 380px;
-				font-family: verdana;
-				overflow-y:scroll;
-				overflow-x:hidden;
+				var item = items[ i ];
+				#><div class="itemListSingleItem"><#= item.title#></div><#
 			}
-			
-			#gadgetContent
+			#>
+		</script>
+		
+		<script id="ItemsByProject" type="text/html">
+			<div class="acc-menu" id="accMenu">
+			<#
+			for( var f in files.items )
 			{
-				margin: 0px;
-				width: 230px;
-				vertical-align: middle;
-				text-align: center;
+				var file = files.items[ f ];
+				#>
+					<div class="acc-menu-item">
+						<div class="acc-menu-hdr" onclick="">
+							<img src="images/closed.png" class="acc-menu-img"><#= file.path#>
+						</div>
+						<div class="acc-menu-ctc">
+							<#= FormatSectionForFile( sections, file )#>
+						</div>
+					</div>
+				<#
 			}
-
-			td { border: solid; vertical-align: middle; padding: 0px; border-color: #a0a0a0; border-width=1px  }
-			th { padding-top: 10px; }
-			
-			.selectedRow
-			{
-				background-color: yellow;
-			}
-
-        </style>
+			#>
+			</div>
+		</script>
+		
     </head>
 	
-    <body onload="init()" onDblClick="reloadPage()">
+    <body onDblClick="ReLoadPage()" onload="InitPage()">
         <g:background id="imgBackground">
-            <span id="gadgetContent" ></span> 
-		</g:background>
+			<div id="wrap">
+				<div id="main" class="clearfix">
+					<div id="tabs">
+						<ul>
+							<li><a href="#tabs-all">All</a></li>
+							<li><a href="#tabs-project">Project</a></li>
+						</ul>
+						<div id="tabs-all">
+						</div>
+						
+						<div id="tabs-project">
+							<div class="tabContent">
+								<div class="acc-menu" id="accMenu">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="footer" class="customFooter">
+				<div id="statusBar">
+				</div>
+			</div>
+		</g:background>		
     </body>
 </html>

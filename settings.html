@@ -14,6 +14,7 @@
 				background-color: yellow;
 			}
         </style>
+		<script type="text/javascript" src="jquery-1.4.1.js"></script>
         <script type="text/jscript" language="jscript">
 				function alert( s )
 				{
@@ -24,9 +25,8 @@
 				{
 					System.Gadget.onSettingsClosed = OnSettingsClosed;
 					var todoFiles = System.Gadget.Settings.read("todoFiles")
-				
-					var main = document.getElementById( "todoFiles" )
-					document.getElementById( "height" ).value = System.Gadget.document.body.style.fontFamily
+					
+					document.getElementById("todoFiles").value = todoFiles;
 				}
 				
 				function OnSettingsClosed( event )
@@ -39,7 +39,7 @@
 						
 						var items = files.split( "\r\n" )
 						
-						System.Gadget.document.parentWindow.m_todoFiles = new Array();
+						System.Gadget.document.parentWindow.m_todoFiles = []
 						
 						for( var i = 0; i < items.length; ++i )
 						{
@@ -50,7 +50,7 @@
 						}
 						
 						 event.cancel = false;
-						 System.Gadget.document.parentWindow.reloadPage()
+						 System.Gadget.document.parentWindow.ReLoadPage()
 					}
 				}	
 
