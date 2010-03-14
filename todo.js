@@ -334,6 +334,7 @@ function OnMouseOutItem( row )
 
 function MakeHtmlHierarchyTree( item )
 {
+	//~ debugger;
 	var node = item.node
 	
 	var items = []
@@ -342,11 +343,12 @@ function MakeHtmlHierarchyTree( item )
 	s = ""
 	for( var i = items.length - 1; i >= 0; --i )
 	{
-		for( var x = 0; x < item.length - x; ++x )
+		s += "<span style='white-space: nowrap;'>"
+		for( var x = 1; x < items.length - i; ++x )
 		{
 			s += "-"
 		}
-		s += items[ i ] + "</br>"
+		s += items[ i ] + "</span></br>"
 	}
 	
 	return s

@@ -100,14 +100,16 @@
 		  
 		<script id="FileItem" type="text/html">
 			<tr id="row<#=uniqueId#>">
-				<td onclick="deleteRow(this.parentNode.parentNode.rowIndex)">-</td>
+				<td onclick="deleteRow(this.parentNode.parentNode.rowIndex)"><img src="images/delete.png"></td>
 				<td class="pathItem"><#=path#></td>
 			</tr>
 		</script>
     </head>
     <body onload="init()">
 		<div id="mainContent">
-			<a href="javascript:document.getElementById( 'browseFile' ).click()">add file</a><br/>
+			<a href="javascript:document.getElementById( 'browseFile' ).click()">
+				<img src="images/add.png" border="0">Add file
+			</a><br/>
 			<br/>
 			<table id="selectedFiles">
 				<tbody>
