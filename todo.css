@@ -2,7 +2,7 @@ body, html
 {
 	margin: 0;
 	width: 250px;
-	height: 380px;
+	height: 580px;
 	#font-family: verdana;
 	overflow-y:scroll;
 	overflow-x:hidden;	

@@ -161,12 +161,17 @@ function FormatHeader( section )
 	
 function IsOld( item )
 {
-	return (item.dueDate < new Date()) || (dateDiff(item.dueDate) < 0);
+	return (item.percent < 100) && ((item.dueDate < new Date()) || (dateDiff(item.dueDate) < 0));
 }
 
 function IsToday( item )
 {
 	if( item.dueDate < new Date() )
+	{
+		return false;
+	}
+	
+	if( item.percent >= 100 )
 	{
 		return false;
 	}
@@ -177,12 +182,22 @@ function IsToday( item )
 
 function IsTomorrow( item )
 {
+	if( item.percent >= 100 )
+	{
+		return false;
+	}
+
 	var diff = dateDiff(item.dueDate)
 	return (diff>= 1) && (diff < 2)
 }
 
 function IsAfterTomorrowButInNext7Days( item )
 {
+	if( item.percent >= 100 )
+	{
+		return false;
+	}
+
 	var diff = dateDiff(item.dueDate);
 	return (diff >= 2) && (diff < 7)
 }
