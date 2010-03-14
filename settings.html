@@ -10,7 +10,7 @@
 			body
 			{
 				margin: 0;
-				width: 650px;
+				width: 400px;
 				height: 300px;
 				font-family: verdana;
 				overflow-y:scroll;
@@ -65,9 +65,9 @@
 				document.getElementById("log").value = id
 			}
 			
-			function deleteRow(i)
+			function deleteRow( rowId )
 			{
-				document.getElementById('selectedFiles').deleteRow(i)
+				document.getElementById('selectedFiles').deleteRow( document.getElementById( rowId ).rowIndex )
 			}
 			
 			function OnSettingsClosed( event )
@@ -100,8 +100,9 @@
 		  
 		<script id="FileItem" type="text/html">
 			<tr id="row<#=uniqueId#>">
-				<td onclick="deleteRow(this.parentNode.parentNode.rowIndex)"><img src="images/delete.png"></td>
+				<td><img src="images/document_time.png"></td>
 				<td class="pathItem"><#=path#></td>
+				<td onclick="deleteRow('row<#=uniqueId#>')"><img src="images/delete.png" alt="remove file from list"></td>
 			</tr>
 		</script>
     </head>
@@ -111,7 +112,7 @@
 				<img src="images/add.png" border="0">Add file
 			</a><br/>
 			<br/>
-			<table id="selectedFiles">
+			<table id="selectedFiles" width="280" cellspacing="0" cellpadding="0">
 				<tbody>
 				</tbody>
 			</table>

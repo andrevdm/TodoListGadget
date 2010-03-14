@@ -89,7 +89,7 @@ Priority: <#= item.priority#>\r\n
 
     </head>
 	
-    <body onDblClick="ReLoadPage()" onload="InitPage()">
+    <body _onDblClick="ReLoadPage()" onload="InitPage()">
         <g:background id="imgBackground">
 			<div id="wrap">
 				<div id="main" class="clearfix">
@@ -115,8 +115,9 @@ Priority: <#= item.priority#>\r\n
 			</div>
 			
 			<div id="footer" class="customFooter">
-				<div id="statusBar">
-				</div>
+				<img src="images/replace2.png" onclick="ReLoadPage()" style="align:left" alt="Reload">
+				<span id="statusBar">
+				</span>
 			</div>
 			
 		</g:background>		

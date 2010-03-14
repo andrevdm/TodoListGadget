@@ -35,7 +35,7 @@ var m_sections =
 		itemTemplate : "#ItemsList"
 	},
 	{
-		title : "Week",
+		title : "Next 7 Days",
 		filter : IsAfterTomorrowButInNext7Days,
 		headerTemplate : "#HeaderTemplate",
 		itemTemplate : "#ItemsTwoColumn",
@@ -325,7 +325,7 @@ function OnMouseOverItem( row )
 		var file = info.file
 		var item = info.item
 		
-		$("#statusBar").html(row.itemId + ", f=" + file.path + ", i=" + item.id + ", d=" + item.title);
+		$("#statusBar").html(row.itemId + ", f=" + file.path + ", i=" + item.id );
 		
 		//Cache row title
 		if( row.title == "" )

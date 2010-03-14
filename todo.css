@@ -1,18 +1,21 @@
 body, html
 {
-	margin: 0;
-	width: 250px;
-	height: 580px;
+	margin : 0;
+	width : 250px;
+	height : 600px;
 	#font-family: verdana;
-	overflow-y:scroll;
-	overflow-x:hidden;	
-	font: 9px "Trebuchet MS", sans-serif;
+	overflow-y : scroll;
+	overflow-x : hidden; 
+	font : 9px "Trebuchet MS", sans-serif;
+	background-color : red
+}
+
+#imgBackground
+{
 }
 
 #wrap
 {
-	overflow-y:scroll;
-	overflow-x:hidden;	
 }
 
 table
