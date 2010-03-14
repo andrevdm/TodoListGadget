@@ -17,14 +17,14 @@
 			<div class="sectionTitle"><#= section.title #></div>
 		</script>
 		
-		<script id="ItemsTwoColumn" type="text/html" src="ItemsTwoColumn.html">
+		<script id="ItemsTwoColumn" type="text/html">
 			<table>
 				<#
 				for( var i in items )
 				{
 					var item = items[ i ];
 					#>
-					<tr onmouseover="OnMouseOverItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
+					<tr onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
 						<td class="tdForTwoCol" nowrap><#= section.formatLeftCol( item ) #></td>
 						<td class="tdForTwoCol"><#= item.title#></td>
 					</tr>
@@ -40,7 +40,7 @@
 			{
 				var item = items[ i ];
 				#>
-					<div class="itemListSingleItem" onmouseover="OnMouseOverItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
+					<div class="itemListSingleItem" onclick="OnMouseClickItem( this )" onmouseover="OnMouseOverItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
 						<#= item.title#>
 					</div>
 				<#
@@ -69,13 +69,23 @@
 			</div>
 		</script>
 
-		<script id="FlyoutTemplate" type="text/html">
-			<#= item.title#><br/>
-			Due: <#= item.dueDate#><br/>
+		<script id="DetailsDialogTemplate" type="text/html">
+			<div class="detailsTitle"><#= item.title#></div>
+			<hr noshade width="80%"/>
+			Due: <#= FormatDate( item.dueDate )#><br/>
 			Priority: <#= item.priority#><br/>
 			<hr/>
 			<pre><#= item.comments#></pre>
+			<hr/>
+			<div class="detailsHierarchyTitle">Path</div>
+			<#=MakeHtmlHierarchyTree( item )#>
 		</script>
+
+		<script id="TooltipTextTemplate" type="text/html"><#= item.title#>\r\n
+Due: <#= item.dueDate#>\r\n
+Priority: <#= item.priority#>\r\n
+---------------------------------\r\n
+<#= item.comments#></script>
 
     </head>
 	
@@ -99,12 +109,16 @@
 						</div>
 					</div>
 				</div>
+				<div id="nonGadgetFooter">
+					<a href="javascript:NonGadgetSettings()">settings</a>
+				</div>
 			</div>
 			
 			<div id="footer" class="customFooter">
 				<div id="statusBar">
 				</div>
 			</div>
+			
 		</g:background>		
     </body>
 </html>

@@ -2,6 +2,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=Unicode" />
         <title>Details</title>
+		<link type="text/css" href="jqueryui/css/ui-lightness/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="jquery-1.4.1.js"></script>
+		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
+		<script type="text/javascript" src="dataTemplate.js"></script>
         <style type="text/css">
 			body
 			{
@@ -12,57 +16,104 @@
 				overflow-y:scroll;
 				overflow-x:hidden;
 				background-color: yellow;
+				font: 11px "Trebuchet MS", sans-serif;
+			}
+			
+			table
+			{
+				font: 11px "Trebuchet MS", sans-serif;
+				border-style: solid;
+				border-width: 1px;
+				border-color: #a0a0a0;				
 			}
         </style>
-		<script type="text/javascript" src="jquery-1.4.1.js"></script>
         <script type="text/jscript" language="jscript">
-				function alert( s )
-				{
-					System.Debug.outputString( s ); 
-				}
+			var m_uniqueId = 1
+		  
+			function alert( s )
+			{
+				System.Debug.outputString( s ); 
+			}
+			
+			function init()
+			{
+				System.Gadget.onSettingsClosed = OnSettingsClosed;
+				var todoFiles = System.Gadget.Settings.read("todoFiles")
 				
-				function init()
+				var items = todoFiles.split( "\r\n" )
+				todoFiles = new Array();
+				
+				for( var i = 0; i < items.length; ++i )
 				{
-					System.Gadget.onSettingsClosed = OnSettingsClosed;
-					var todoFiles = System.Gadget.Settings.read("todoFiles")
+					AddItem( items[i] )
+				}
+			}
+			
+			function AddItem( item )
+			{
+				item = Trim( item )
+				if( item != "" )
+				{
+					m_uniqueId += 1
+					var html = $( "#FileItem" ).parseTemplate( {path : item, uniqueId : m_uniqueId} );
+					$("#selectedFiles > tbody:last").append( html );
+				}
+			}
+			
+			function RemoveFile( id )
+			{
+				document.getElementById("log").value = id
+			}
+			
+			function deleteRow(i)
+			{
+				document.getElementById('selectedFiles').deleteRow(i)
+			}
+			
+			function OnSettingsClosed( event )
+			{
+				if( event.closeAction == event.Action.commit )
+				{
+					var files = []
+					var filesString = ""
+					System.Gadget.document.parentWindow.m_todoFiles = files
 					
-					document.getElementById("todoFiles").value = todoFiles;
-				}
-				
-				function OnSettingsClosed( event )
-				{
-					if( event.closeAction == event.Action.commit )
+					var items = $(".pathItem");
+					
+					for( var i = 0; i < items.length; ++i )
 					{
-						var main = document.getElementById( "todoFiles" )
-						var files = Trim( main.value )
-						System.Gadget.Settings.write( "todoFiles", files )
-						
-						var items = files.split( "\r\n" )
-						
-						System.Gadget.document.parentWindow.m_todoFiles = []
-						
-						for( var i = 0; i < items.length; ++i )
-						{
-							if( items[i] != "" )
-							{
-								System.Gadget.document.parentWindow.m_todoFiles[ System.Gadget.document.parentWindow.m_todoFiles.length ] = items[ i ];
-							}
-						}
-						
-						 event.cancel = false;
-						 System.Gadget.document.parentWindow.ReLoadPage()
+						filesString += (i > 0 ? "\r\n" : "") + items[ i ].innerText;
+						files[ files.length ] = items[ i ].innerText;
 					}
-				}	
+					
+					System.Gadget.Settings.write( "todoFiles", filesString )
+					System.Gadget.document.parentWindow.ReLoadPage()
+					event.cancel = false;
+				}
+			}	
 
-				function Trim( s )
-				{
+			function Trim( s )
+			{
 					return s.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 				}
         </script>
+		  
+		<script id="FileItem" type="text/html">
+			<tr id="row<#=uniqueId#>">
+				<td onclick="deleteRow(this.parentNode.parentNode.rowIndex)">-</td>
+				<td class="pathItem"><#=path#></td>
+			</tr>
+		</script>
     </head>
     <body onload="init()">
 		<div id="mainContent">
-			<textarea id="todoFiles" cols="35" rows="5"></textarea><br/>
+			<a href="javascript:document.getElementById( 'browseFile' ).click()">add file</a><br/>
+			<br/>
+			<table id="selectedFiles">
+				<tbody>
+				</tbody>
+			</table>
 		</div>
+		<input type="file" onchange="AddItem(this.value)" id="browseFile" style="display:none">
     </body>
 </html>

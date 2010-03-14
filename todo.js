@@ -10,7 +10,6 @@ var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", 
 
 var m_day=1000*60*60*24
 var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-var m_isGadget = false;
 var m_todoFiles = []
 var m_files = null
 
@@ -56,16 +55,7 @@ $(document).ready(function()
 
 function InitPage()
 {
-	if( typeof System != "undefined" )
-	{
-		m_isGadget = true;
-		InitGadget();
-	}
-	else
-	{
-		m_todoFiles = ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"]
-	}
-	
+	InitGadget();
 	LoadPage()
 }
 
@@ -237,7 +227,7 @@ function compareTo( x, y )
 	return (x < y) ? -1 : ((x > y) ? 1  : 0);
 }
 
-function formatDate( d )
+function FormatDate( d )
 {
 	return d.getYear() + "-" + (d.getMonth() < 9 ? "0" : "") +  (d.getMonth()  + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") +  d.getMinutes()
 }
@@ -254,10 +244,8 @@ function formatDateAsNumberOfDays( d )
 	return Math.round( days )
 }
 
-function OnMouseOverItem( row )
+function UpdateRowCacheAndGetInfo( row )
 {
-	$(row).addClass( "selectedItem" )
-	
 	//Cache files by ID
 	if( m_files.itemsById == null )
 	{
@@ -281,13 +269,101 @@ function OnMouseOverItem( row )
 	}
 	
 	var item = file.itemsById[row.itemId]
-	$("#statusBar").html(row.itemId + ", f=" + file.path + ", i=" + item.id + ", d=" + item.title);
-	
-	ShowFlyout();
-	UpdateFlyout( item );
+	return { item : item, file : file }
+}
+
+function OnMouseClickItem( row )
+{
+	try
+	{
+		var info = UpdateRowCacheAndGetInfo( row )
+		var file = info.file
+		var item = info.item
+		
+		var infoDialog = $('<div></div>')
+			.html( $( "#DetailsDialogTemplate" ).parseTemplate( {item:item} ) )
+			.dialog(
+			{
+				autoOpen: false,
+				title: FormatDate( item.dueDate ),
+				modal: true,
+				width: 210,
+				height: 350,
+				draggable: false
+			});
+		
+		infoDialog.dialog('open')
+	}
+	catch( ex )
+	{
+		$("#statusBar").html( "Exception: " + ex.message )
+	}
+}
+
+function OnMouseOverItem( row )
+{
+	try
+	{
+		$(row).addClass( "selectedItem" )
+		
+		var info = UpdateRowCacheAndGetInfo( row )
+		var file = info.file
+		var item = info.item
+		
+		$("#statusBar").html(row.itemId + ", f=" + file.path + ", i=" + item.id + ", d=" + item.title);
+		
+		//Cache row title
+		if( row.title == "" )
+		{
+			row.title = $( "#TooltipTextTemplate" ).parseTemplate( {item:item} )
+		}
+		
+		//ShowFlyout();
+		//UpdateFlyout( item );
+	}
+	catch( ex )
+	{
+		$("#statusBar").html( "Exception: " + ex.message )
+	}
 }
 
 function OnMouseOutItem( row )
 {
 	$(row).removeClass( "selectedItem" )
+}
+
+function MakeHtmlHierarchyTree( item )
+{
+	var node = item.node
+	
+	var items = []
+	GetHierarchy( node, items )
+	
+	s = ""
+	for( var i = items.length - 1; i >= 0; --i )
+	{
+		for( var x = 0; x < item.length - x; ++x )
+		{
+			s += "-"
+		}
+		s += items[ i ] + "</br>"
+	}
+	
+	return s
+}
+
+function GetHierarchy( node, items )
+{
+	if( (node.parentNode != null) && (node.nodeName != "TODOLIST") )
+	{
+		items[ items.length ] = node.getAttributeNode( "TITLE" ).value 
+		GetHierarchy( node.parentNode, items )
+	}
+	else
+	{
+		if( node.nodeName != "TODOLIST" )
+		{
+			items[ items.length ] = node.getAttributeNode( "TITLE" ).value 
+		}
+	}
 }

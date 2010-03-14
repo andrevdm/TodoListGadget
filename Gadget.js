@@ -1,3 +1,5 @@
+var m_isGadget = false;
+
 function debug( s )
 {
 	System.Debug.outputString( s ); 
@@ -5,12 +7,20 @@ function debug( s )
 
 function InitGadget()
 {
+	if( typeof System == "undefined" )
+	{
+		m_todoFiles = ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"]
+		//$("#nonGadgetFooter").css( "display", "inline" );
+		return
+	}
+	
+	m_isGadget = true
 	var oBackground = document.getElementById("imgBackground");
 	oBackground.style.msInterpolationMode = "bicubic";
 	oBackground.src = "url(images/bg.png)";
 	
 	System.Gadget.settingsUI = "settings.html";
-	System.Gadget.Flyout.file = "details.html";
+	//System.Gadget.Flyout.file = "details.html";
 	m_todoFiles = ReadConfig()
 }
 
@@ -55,4 +65,9 @@ function UpdateFlyout( item )
 	var doc = System.Gadget.Flyout.document
 	var div = doc.getElementById( "mainContent" )
 	$(div).html( $( "#FlyoutTemplate" ).parseTemplate( {item:item} ) )
+}
+
+function NonGadgetSettings()
+{
+	//window.open( "settings.html" )
 }

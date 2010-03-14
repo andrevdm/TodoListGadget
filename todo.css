@@ -79,3 +79,24 @@ table
 {
 	background-color: yellow;
 }
+
+.detailsTitle
+{
+	font: 11px;
+	font-weight: bold; 
+	color: blue
+}
+
+.detailsHierarchyTitle
+{
+	font: 11px;
+	font-weight: bold; 
+	color: blue
+}
+
+#nonGadgetFooter
+{
+	display : none;
+	background-color : black;
+	color : white;
+}
