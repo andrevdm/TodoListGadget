@@ -12,6 +12,7 @@ var m_day=1000*60*60*24
 var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var m_isGadget = false;
 var m_todoFiles = []
+var m_files = null
 
 var m_sections = 
 [
@@ -49,7 +50,7 @@ $(document).ready(function()
 	
 	if( m_refreshMinutes > 0 )
 	{
-		setTimeout( LoadPage, 1000*60*m_refreshMinutes );
+		setTimeout( LoadPage, 1000 * 60 * m_refreshMinutes );
 	}	
 });
 
@@ -91,10 +92,10 @@ function LoadProjectAccordion()
 				}
 				else
 				{
-				  $('.acc-menu-ctc:visible').slideUp('normal');
+					$('.acc-menu-ctc:visible').slideUp('normal');
 					$(this).children( ".acc-menu-img" ).attr( "src", "images/open.png" )
-				  checkElement.slideDown('normal');
-				  return false;
+					checkElement.slideDown('normal');
+					return false;
 				}
 			}
 		} 
@@ -111,6 +112,7 @@ function LoadPage()
 {
 	$("#statusBar").html("loading");
 	var files = TodoParser.ParseFiles( m_todoFiles )
+	m_files = files
 	
 	var projectAll = document.getElementById( "tabs-all" )
 	var projectTab = document.getElementById( "tabs-project" )
@@ -252,3 +254,40 @@ function formatDateAsNumberOfDays( d )
 	return Math.round( days )
 }
 
+function OnMouseOverItem( row )
+{
+	$(row).addClass( "selectedItem" )
+	
+	//Cache files by ID
+	if( m_files.itemsById == null )
+	{
+		m_files.itemsById = []
+		for( var f in m_files.items )
+		{
+			m_files.itemsById[ m_files.items[ f ].path ] = m_files.items[ f ]
+		}
+	}
+	
+	var file = m_files.itemsById[ row.filePath ]
+	
+	//Cache items by ID
+	if( file.itemsById == null )
+	{
+		file.itemsById = []
+		for( var i in file.items )
+		{
+			file.itemsById[ file.items[i].id ] = file.items[i]
+		}
+	}
+	
+	var item = file.itemsById[row.itemId]
+	$("#statusBar").html(row.itemId + ", f=" + file.path + ", i=" + item.id + ", d=" + item.title);
+	
+	ShowFlyout();
+	UpdateFlyout( item );
+}
+
+function OnMouseOutItem( row )
+{
+	$(row).removeClass( "selectedItem" )
+}

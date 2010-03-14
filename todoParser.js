@@ -40,7 +40,7 @@ TodoParser =
 		{
 			items[ items.length ] = new TodoItem( nodes[i], ownerFile ) 
 			
-			this.FindTasks( xmlDoc, nodes[i], level + 1, items );
+			this.FindTasks( xmlDoc, nodes[i], level + 1, items, ownerFile );
 		}
 	}
 }
@@ -50,7 +50,7 @@ function TodoItem( node, file )
 	this.type = "TodoItem"
 	this.node = node
 	this.file = file
-			
+	
 	this.percent = 0
 	if( node.getAttributeNode( "PERCENTDONE" ) != null )
 	{

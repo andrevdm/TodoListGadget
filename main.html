@@ -24,8 +24,8 @@
 				{
 					var item = items[ i ];
 					#>
-					<tr>
-						<td class="tdForTwoCol"><#= section.formatLeftCol( item ) #></td>
+					<tr onmouseover="OnMouseOverItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
+						<td class="tdForTwoCol" nowrap><#= section.formatLeftCol( item ) #></td>
 						<td class="tdForTwoCol"><#= item.title#></td>
 					</tr>
 					<#
@@ -39,7 +39,11 @@
 			for( var i in items )
 			{
 				var item = items[ i ];
-				#><div class="itemListSingleItem"><#= item.title#></div><#
+				#>
+					<div class="itemListSingleItem" onmouseover="OnMouseOverItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
+						<#= item.title#>
+					</div>
+				<#
 			}
 			#>
 		</script>
@@ -64,7 +68,15 @@
 			#>
 			</div>
 		</script>
-		
+
+		<script id="FlyoutTemplate" type="text/html">
+			<#= item.title#><br/>
+			Due: <#= item.dueDate#><br/>
+			Priority: <#= item.priority#><br/>
+			<hr/>
+			<pre><#= item.comments#></pre>
+		</script>
+
     </head>
 	
     <body onDblClick="ReLoadPage()" onload="InitPage()">

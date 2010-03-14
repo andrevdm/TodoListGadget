@@ -10,6 +10,7 @@ function InitGadget()
 	oBackground.src = "url(images/bg.png)";
 	
 	System.Gadget.settingsUI = "settings.html";
+	System.Gadget.Flyout.file = "details.html";
 	m_todoFiles = ReadConfig()
 }
 
@@ -29,4 +30,29 @@ function ReadConfig()
 	}
 	
 	return todoFiles;
+}
+
+function ShowFlyout()
+{
+	if( !m_isGadget )
+	{
+		return;
+	}
+	
+	if( !System.Gadget.Flyout.show )
+	{
+		System.Gadget.Flyout.show = true;
+	}
+}
+
+function UpdateFlyout( item )
+{
+	if( !m_isGadget )
+	{
+		return;
+	}
+
+	var doc = System.Gadget.Flyout.document
+	var div = doc.getElementById( "mainContent" )
+	$(div).html( $( "#FlyoutTemplate" ).parseTemplate( {item:item} ) )
 }
