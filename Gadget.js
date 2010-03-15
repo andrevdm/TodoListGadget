@@ -9,7 +9,7 @@ function InitGadget()
 {
 	if( typeof System == "undefined" )
 	{
-		m_todoFiles = ["C:\\temp\\a.xml", "c:\\temp\\a2.xml"]
+		m_todoFiles = ["C:\\temp\\a.xml", "c:\\temp\\a2.xml","C:\\temp\\a.xml", "c:\\temp\\a2.xml"]
 		//$("#nonGadgetFooter").css( "display", "inline" );
 		return
 	}

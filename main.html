@@ -18,15 +18,15 @@
 		</script>
 		
 		<script id="ItemsTwoColumn" type="text/html">
-			<table>
+			<table class="twoColTable">
 				<#
 				for( var i in items )
 				{
 					var item = items[ i ];
 					#>
-					<tr onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
-						<td class="tdForTwoCol" nowrap><#= section.formatLeftCol( item ) #></td>
-						<td class="tdForTwoCol"><#= item.title#></td>
+					<tr class="twoColRow" onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
+						<td class="twoColLeft"><#= section.formatLeftCol( item ) #></td>
+						<td class="twoColTitle"><#= item.title#></td>
 					</tr>
 					<#
 				}
@@ -35,17 +35,19 @@
 		</script>
 		
 		<script id="ItemsList" type="text/html">
+			<table class="twoColTable">
 			<#
 			for( var i in items )
 			{
 				var item = items[ i ];
 				#>
-					<div class="itemListSingleItem" onclick="OnMouseClickItem( this )" onmouseover="OnMouseOverItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
-						<#= item.title#>
-					</div>
+					<tr class="twoColRow" onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
+						<td class="twoColTitle"><#= item.title#></td>
+					</tr>
 				<#
 			}
 			#>
+			</table>
 		</script>
 		
 		<script id="ItemsByProject" type="text/html">
@@ -74,6 +76,7 @@
 			<hr noshade width="80%"/>
 			Due: <#= FormatDate( item.dueDate )#><br/>
 			Priority: <#= item.priority#><br/>
+			File: <#= item.file.path#><br/>
 			<hr/>
 			<pre><#= item.comments#></pre>
 			<hr/>
@@ -81,67 +84,79 @@
 			<#=MakeHtmlHierarchyTree( item )#>
 		</script>
 
-		<script id="TooltipTextTemplate" type="text/html"><#= item.title#>\r\n
-Due: <#= item.dueDate#>\r\n
+		<script id="TooltipTextTemplate" type="text/html"><#=item.title#>\r\n
+Due: <#= FormatDate( item.dueDate )#>\r\n
 Priority: <#= item.priority#>\r\n
+File: <#=item.file.path#>\r\n
 ---------------------------------\r\n
 <#= item.comments#></script>
 
 		<script id="LogItemTemplate" type="text/html">
 			<tr>
-				<td class="logItem"><img src="images/<#=level#>.png" align="left"><#=message#></td>
+				<td class="logItem" title="<#=at#>\r\n<#=message#>"><img src="images/<#=level#>.png" align="left"><#=message#></td>
 			</tr>
 		</script>
 
     </head>
 	
     <body _onDblClick="ReLoadPage()" onload="InitPage()">
-        <g:background id="imgBackground">
-			<div id="wrap">
-				<div id="main" class="clearfix">
-					<div id="tabs">
-						<ul>
-							<li><a href="#tabs-all">All</a></li>
-							<li><a href="#tabs-project">Project</a></li>
-							<li><a href="#tabs-log">Log</a></li>
-							<li><a href="#tabs-todo">TODO</a></li>
-						</ul>
-						<div id="tabs-all">
-						</div>
-						
-						<div id="tabs-project">
-							<div class="tabContent">
-								<div class="acc-menu" id="accMenu">
+		<div id="outerDiv">
+			  <g:background id="imgBackground">
+				<div id="wrap">
+					<div id="main" class="clearfix">
+						<div id="tabs">
+							<ul>
+								<li><a href="#tabs-all">All</a></li>
+								<li><a href="#tabs-project">Project</a></li>
+								<li><a href="#tabs-log">Log</a></li>
+								<li><a href="#tabs-todo">TODO</a></li>
+							</ul>
+							
+							<div id="tabs-all" class="tabItem">
+								<div id="allTabContent" class="tabContent">
 								</div>
 							</div>
-						</div>
-						<div id="tabs-project">
-						</div>
-						<div id="tabs-log">
-							<table border="0" id="logContent">
-							</table>
-						</div>
-						<div id="tabs-todo">
-							<ul>
-								<li>priority</li>
-								<li>file name from path</li>
-								<li>exception handeling</li>
-								<li>logs</li>
-							</ul>
+							
+							<div id="tabs-project" class="tabItem">
+								<div id="projectTabContent" class="tabContent">
+									<div class="acc-menu" id="accMenu">
+									</div>
+								</div>
+							</div>
+							
+							<div id="tabs-log" class="tabItem">
+								<div id="logTabContent" class="tabContent">
+									<table border="0" id="logContent">
+									</table>
+								</div>
+							</div>
+							
+							<div id="tabs-todo" class="tabItem">
+								<div id="todoTabContent" class="tabContent">
+									<ul>
+										<li>priority</li>
+										<li>file name from path</li>
+										<li>exception handeling</li>
+										<li>logs</li>
+										<li>Colour for each file</li>
+									</ul>
+								</div>
+							</div>
+							
 						</div>
 					</div>
+					<div id="nonGadgetFooter">
+						<a href="javascript:NonGadgetSettings()">settings</a>
+					</div>
 				</div>
-				<div id="nonGadgetFooter">
-					<a href="javascript:NonGadgetSettings()">settings</a>
+				
+				<div id="footer" class="customFooter">
+					<img src="images/replace2.png" onclick="ReLoadPage()" style="align:left" alt="Reload">
+					<span id="statusBar">
+					</span>
 				</div>
-			</div>
-			
-			<div id="footer" class="customFooter">
-				<img src="images/replace2.png" onclick="ReLoadPage()" style="align:left" alt="Reload">
-				<span id="statusBar">
-				</span>
-			</div>
-			
-		</g:background>		
+				
+			</g:background>		
+		</div>
     </body>
 </html>

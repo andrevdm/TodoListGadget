@@ -1,21 +1,30 @@
 body, html
 {
 	margin : 0;
-	width : 250px;
+	width : 320px;
 	height : 600px;
-	#font-family: verdana;
-	overflow-y : scroll;
+	overflow-y : hidden;
 	overflow-x : hidden; 
 	font : 9px "Trebuchet MS", sans-serif;
-	background-color : red
 }
 
-#imgBackground
+.tabContent
 {
+	overflow-y : auto;
+	overflow-x : hidden; 
+	height: 520px;
+}
+
+#outerDiv
+{
+	margin : 0;
+	height : 600px;
 }
 
 #wrap
 {
+	margin : 0;
+	height : 600px;
 }
 
 table
@@ -23,13 +32,11 @@ table
 	margin: 0;
 	#font-family: verdana;
 	font: 9px "Trebuchet MS", sans-serif;
-	width: 240px;
 }
 
 #gadgetContent
 {
 	margin: 0px;
-	width: 230px;
 	vertical-align: middle;
 	text-align: center;
 }
@@ -46,15 +53,6 @@ table
 	margin: 2px;
 }
 
-.itemListSingleItem
-{
-	margin-top: 2px;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #a0a0a0;
-	width: 240px;
-}
-
 .sectionTitle
 {
 	padding-top: 10px;
@@ -63,7 +61,33 @@ table
 	color: blue;
 }
 
-.tdForTwoCol { border: solid; vertical-align: middle; padding: 0px; border-color: #a0a0a0; border-width=1px  }
+.twoColTable
+{ 
+	table-layout:fixed; 
+	width:280px;
+}
+
+.twoColLeft
+{
+	border: solid; 
+	padding: 0px; 
+	border-color: #a0a0a0; 
+	border-width=1px;
+	white-space: nowrap;
+	width: 13px;
+}
+
+.twoColTitle
+{
+	border: solid; 
+	vertical-align: middle; 
+	padding: 0px; 
+	border-color: #a0a0a0; 
+	border-width=1px;
+	overflow: hidden; 
+	text-overflow: ellipsis; 
+	white-space: nowrap;
+}
 
 .selectedRow
 {

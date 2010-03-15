@@ -115,11 +115,8 @@ function LoadPage()
 	var files = TodoParser.ParseFiles( m_todoFiles )
 	m_files = files
 	
-	var projectAll = document.getElementById( "tabs-all" )
-	var projectTab = document.getElementById( "tabs-project" )
-	
 	var output = FormatAllSections( m_sections, files )
-	$('#tabs-all').html(output);
+	$('#allTabContent').html(output);
 	
 	output = FormatSectionsByProject( m_sections, files )
 	$('#accMenu').html(output);
@@ -386,7 +383,7 @@ function GetHierarchy( node, items )
 
 function Log( level, message )
 {
-	var log = { level:level, message:message }
+	var log = { level:level, message:message, at:new Date() }
 	m_log[ m_log.length ] = log
 	$("#logContent > tbody:first").prepend( $("#LogItemTemplate").parseTemplate( log ) );
 }
