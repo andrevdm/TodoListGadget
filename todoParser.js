@@ -76,7 +76,7 @@ function TodoFile( path )
 	this.path = path
 	this.items = []	
 	
-	this.SelectItems = function( filter )
+	this.SelectItems = function( filters )
 	{
 		var filtered = [];
 		
@@ -84,7 +84,7 @@ function TodoFile( path )
 		{
 			var item = this.items[ i ];
 			
-			if( filter( item ) )
+			if( AllFilters( filters, item ) )
 			{
 				filtered[ filtered.length ] = item;
 			}
@@ -99,7 +99,7 @@ function TodoFileCollection( files )
 	this.type = "TodoFileCollection"
 	this.items = files
 	
-	this.SelectItems = function( filter )
+	this.SelectItems = function( filters )
 	{
 		var filtered = [];
 		
@@ -107,12 +107,12 @@ function TodoFileCollection( files )
 		{
 			var file = this.items[f];
 			
-			var filteredForFile = file.SelectItems( filter )
+			var filteredForFile = file.SelectItems( filters )
 			for( var i = 0; i < filteredForFile.length; ++i )
 			{
 				var item = filteredForFile[ i ];
 				
-				if( filter( item ) )
+				if( AllFilters( filters, item ) )
 				{
 					filtered[ filtered.length ] = item;
 				}
@@ -148,4 +148,18 @@ function ParseDate( dateStr )
 	date.setSeconds( 0 )
 
 	return date
+}
+
+function AllFilters( filters, item )
+{
+	for( var f = 0; f < filters.length; ++f )
+	{
+		var match = filters[f]( item );
+		if( !match )
+		{
+			return false;
+		}
+	}
+	
+	return true;
 }

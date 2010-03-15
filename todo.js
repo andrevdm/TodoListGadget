@@ -18,26 +18,26 @@ var m_sections =
 [
 	{
 		title : "Overdue",
-		filter : IsOld,
+		filters : [HasDueDate, IsIncomplete, IsOld],
 		headerTemplate : "#HeaderTemplate",
 		itemTemplate : "#ItemsTwoColumn",
 		formatLeftCol : function( item ){ return dateDiff( item.dueDate ) }
 	},
 	{
 		title : "Today",
-		filter : IsToday,
+		filters : [HasDueDate, IsIncomplete, IsToday],
 		headerTemplate : "#HeaderTemplate",
 		itemTemplate : "#ItemsList"
 	},
 	{
 		title : "Tomorrow",
-		filter : IsTomorrow,
+		filters : [HasDueDate, IsIncomplete, IsTomorrow],
 		headerTemplate : "#HeaderTemplate",
 		itemTemplate : "#ItemsList"
 	},
 	{
 		title : "Next 7 Days",
-		filter : IsAfterTomorrowButInNext7Days,
+		filters : [HasDueDate, IsIncomplete, IsAfterTomorrowButInNext7Days],
 		headerTemplate : "#HeaderTemplate",
 		itemTemplate : "#ItemsTwoColumn",
 		formatLeftCol : function( item ){ return m_days[ item.dueDate.getDay() ] }
@@ -148,8 +148,7 @@ function FormatAllSections( sections, files )
 	for( var s in sections )
 	{
 		var section = sections[s];
-		var filter = function( item ){ return SelectItemsWithDueDate( item ) && section.filter( item ) };
-		var items = files.SelectItems( filter );
+		var items = files.SelectItems( section.filters );
 		items.sort( SortByDueDate );
 		
 		if( items.length == 0 )
@@ -172,7 +171,7 @@ function FormatHeader( section )
 	
 function IsOld( item )
 {
-	return (item.percent < 100) && ((item.dueDate < new Date()) || (dateDiff(item.dueDate) < 0));
+	return (item.dueDate < new Date()) || (dateDiff(item.dueDate) < 0);
 }
 
 function IsToday( item )
@@ -182,39 +181,28 @@ function IsToday( item )
 		return false;
 	}
 	
-	if( item.percent >= 100 )
-	{
-		return false;
-	}
-
 	var diff = dateDiff(item.dueDate)
 	return (diff>= 0) && (diff < 1)
 }
 
 function IsTomorrow( item )
 {
-	if( item.percent >= 100 )
-	{
-		return false;
-	}
-
 	var diff = dateDiff(item.dueDate)
 	return (diff>= 1) && (diff < 2)
 }
 
 function IsAfterTomorrowButInNext7Days( item )
 {
-	if( item.percent >= 100 )
-	{
-		return false;
-	}
-
 	var diff = dateDiff(item.dueDate);
 	return (diff >= 2) && (diff < 7)
 }
 
-	
-function SelectItemsWithDueDate( item )
+function IsIncomplete( item )
+{
+	return (item.percent < 100);
+}
+
+function HasDueDate( item )
 {
 	return (item.dueDate != null);
 }
