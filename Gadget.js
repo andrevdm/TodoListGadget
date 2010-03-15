@@ -7,20 +7,40 @@ function debug( s )
 
 function InitGadget()
 {
+	//If running in a browser, not as a gadget
 	if( typeof System == "undefined" )
 	{
-		m_todoFiles = ["C:\\temp\\a.xml", "c:\\temp\\a2.xml","C:\\temp\\a.xml", "c:\\temp\\a2.xml"]
-		//$("#nonGadgetFooter").css( "display", "inline" );
-		return
+		System = new Object();
+		System.Gadget = new Object();
+		System.Debug = new Object();
+		System.Debug.outputString = function(s){ window.alert(s); }
+		
+		System.settings = [];
+		System.Gadget = new Object();
+		System.Gadget.Settings = new Object();
+		System.Gadget.Settings.read = function( key ){ return System.Gadget.Settings.settings[ key ]; };
+		System.Gadget.Settings.write = function( key, value ){ System.Gadget.Settings.settings[ key ] = value };
+		System.Gadget.Settings.settings = [];
+		System.Gadget.document = document
+		
+		System.Gadget.Settings.settings[ "todoFiles" ] = "C:\\temp\\a.xml\r\nc:\\temp\\a2.xml";
 	}
+	else
+	{
+		m_isGadget = true
+		$("#nonGadgetSettings").css( "display", "none" )
+	}
+}
+
+function InitTodoGadget()
+{
+	InitGadget();
 	
-	m_isGadget = true
 	var oBackground = document.getElementById("imgBackground");
 	oBackground.style.msInterpolationMode = "bicubic";
 	oBackground.src = "url(images/bg.png)";
 	
 	System.Gadget.settingsUI = "settings.html";
-	//System.Gadget.Flyout.file = "details.html";
 	m_todoFiles = ReadConfig()
 }
 
@@ -40,34 +60,4 @@ function ReadConfig()
 	}
 	
 	return todoFiles;
-}
-
-function ShowFlyout()
-{
-	if( !m_isGadget )
-	{
-		return;
-	}
-	
-	if( !System.Gadget.Flyout.show )
-	{
-		System.Gadget.Flyout.show = true;
-	}
-}
-
-function UpdateFlyout( item )
-{
-	if( !m_isGadget )
-	{
-		return;
-	}
-
-	var doc = System.Gadget.Flyout.document
-	var div = doc.getElementById( "mainContent" )
-	$(div).html( $( "#FlyoutTemplate" ).parseTemplate( {item:item} ) )
-}
-
-function NonGadgetSettings()
-{
-	//window.open( "settings.html" )
 }

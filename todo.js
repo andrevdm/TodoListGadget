@@ -1,6 +1,7 @@
 //-----------------
 //Config
 //-----------------
+//TODO should be on the config screen
 var m_todoFiles = new Array();
 var m_refreshMinutes = 5
 var m_defaultTimeHour = 8
@@ -58,7 +59,7 @@ $(document).ready(function()
 	if( m_refreshMinutes > 0 )
 	{
 		setTimeout( LoadPage, 1000 * 60 * m_refreshMinutes );
-	}	
+	}
 	
 	Log( "info", "Loaded: " + (new Date()) )
 });
@@ -66,7 +67,7 @@ $(document).ready(function()
 
 function InitPage()
 {
-	InitGadget();
+	InitTodoGadget();
 	LoadPage()
 }
 
@@ -328,9 +329,6 @@ function OnMouseOverItem( row )
 		{
 			row.title = $( "#TooltipTextTemplate" ).parseTemplate( {item:item} )
 		}
-		
-		//ShowFlyout();
-		//UpdateFlyout( item );
 	}
 	catch( ex )
 	{
@@ -345,7 +343,6 @@ function OnMouseOutItem( row )
 
 function MakeHtmlHierarchyTree( item )
 {
-	//~ debugger;
 	var node = item.node
 	
 	var items = []
@@ -386,4 +383,15 @@ function Log( level, message )
 	var log = { level:level, message:message, at:new Date() }
 	m_log[ m_log.length ] = log
 	$("#logContent > tbody:first").prepend( $("#LogItemTemplate").parseTemplate( log ) );
+}
+
+function CallMe()
+{
+	debugger;
+}
+
+function NonGadgetSettings()
+{
+	var settings = window.open( "settings.html", "todo_gadget_settings", "status=1, toolbar=0, location=1, menubar=1, width=400, height=300" )
+	settings.focus();
 }
