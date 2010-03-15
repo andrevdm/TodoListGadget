@@ -6,11 +6,19 @@ TodoParser =
 			
 		for( var i = 0; i < paths.length; ++i )
 		{
-			var info = new TodoFile( paths[ i ] )
-			
-			files[ files.length ] = info
-			
-			this.ParseFile( paths[i], info.items, info )
+			try
+			{
+				var info = new TodoFile( paths[ i ] )
+				
+				files[ files.length ] = info
+				
+				this.ParseFile( paths[i], info.items, info )
+				Log( "info", "Parsed " + paths[i] )
+			}
+			catch( ex )
+			{
+				Log( "error", "Exception parsing file. " + paths[i] + " - " + ex.message )
+			}
 		}
 		
 		return new TodoFileCollection( files )

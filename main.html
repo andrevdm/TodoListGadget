@@ -88,8 +88,9 @@ Priority: <#= item.priority#>\r\n
 <#= item.comments#></script>
 
 		<script id="LogItemTemplate" type="text/html">
-			<span class="logItem"><img src="images/<#=level#>.png" align="left"><#=message#></span>
-			<br/>
+			<tr>
+				<td class="logItem"><img src="images/<#=level#>.png" align="left"><#=message#></td>
+			</tr>
 		</script>
 
     </head>
@@ -117,8 +118,8 @@ Priority: <#= item.priority#>\r\n
 						<div id="tabs-project">
 						</div>
 						<div id="tabs-log">
-							<div id="logContent">
-							</div>
+							<table border="0" id="logContent">
+							</table>
 						</div>
 						<div id="tabs-todo">
 							<ul>

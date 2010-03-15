@@ -47,7 +47,7 @@ var m_sections =
 //TODO not working
 $(window).error(function() 
 {
-	Log( {level:"error", message:"exception"} )
+	Log( "error", "exception" )
 	return true;
 });
 	
@@ -60,7 +60,7 @@ $(document).ready(function()
 		setTimeout( LoadPage, 1000 * 60 * m_refreshMinutes );
 	}	
 	
-	Log( {level:"info", message:"Loaded: " + (new Date())} )
+	Log( "info", "Loaded: " + (new Date()) )
 });
 
 
@@ -384,8 +384,9 @@ function GetHierarchy( node, items )
 	}
 }
 
-function Log( log )
+function Log( level, message )
 {
+	var log = { level:level, message:message }
 	m_log[ m_log.length ] = log
-	document.getElementById("logContent").innerHTML += $("#LogItemTemplate").parseTemplate( log )
+	$("#logContent > tbody:first").prepend( $("#LogItemTemplate").parseTemplate( log ) );
 }
