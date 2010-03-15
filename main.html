@@ -25,7 +25,7 @@
 					var item = items[ i ];
 					#>
 					<tr class="twoColRow" onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
-						<td class="twoColLeft"><#= section.formatLeftCol( item ) #></td>
+						<td class="twoColLeft" width="<#=colLeftWidth#>px;"><#= section.formatLeftCol( item ) #></td>
 						<td class="twoColTitle"><#= item.title#></td>
 					</tr>
 					<#
@@ -152,6 +152,7 @@ File: <#=item.file.path#>\r\n
 				</div>
 				
 				<div id="footer" class="customFooter">
+					<img src="images/read.png" onclick="LoadPage()" style="align:left" alt="Load">
 					<img src="images/replace2.png" onclick="ReLoadPage()" style="align:left" alt="Reload">
 					<img src="images/tools.png" id="nonGadgetSettings" onclick="NonGadgetSettings()" style="align:left" alt="Settings">
 					<span id="statusBar">

@@ -22,7 +22,8 @@ var m_sections =
 		filters : [HasDueDate, IsIncomplete, IsOld],
 		headerTemplate : "#HeaderTemplate",
 		itemTemplate : "#ItemsTwoColumn",
-		formatLeftCol : function( item ){ return dateDiff( item.dueDate ) }
+		formatLeftCol : function( item ){ return dateDiff( item.dueDate ) },
+		colLeftWidth : 13
 	},
 	{
 		title : "Today",
@@ -41,7 +42,8 @@ var m_sections =
 		filters : [HasDueDate, IsIncomplete, IsAfterTomorrowButInNext7Days],
 		headerTemplate : "#HeaderTemplate",
 		itemTemplate : "#ItemsTwoColumn",
-		formatLeftCol : function( item ){ return m_days[ item.dueDate.getDay() ] }
+		formatLeftCol : function( item ){ return m_days[ item.dueDate.getDay() ] },
+		colLeftWidth : 23
 	}
 ]	
 
@@ -126,6 +128,17 @@ function LoadPage()
 	$("#statusBar").html("loaded");
 }
 
+function UpdateFilesFromSettingsPage( files )
+{
+	m_files = []
+	
+	for( var i = 0; i < files.length; ++i )
+	{
+		//Make a local copy of the string
+		m_files[ m_files.length ] = "" + files[ i ]
+	}
+}
+
 function FormatSectionsByProject( sections, files )
 {
 	var html = $( "#ItemsByProject" ).parseTemplate( {sections : sections, files : files} );
@@ -155,7 +168,7 @@ function FormatAllSections( sections, files )
 		}
 		
 		html += FormatHeader( section );
-		html += $( section.itemTemplate ).parseTemplate( {section:section, items : items} );
+		html += $( section.itemTemplate ).parseTemplate( {section:section, items : items, colLeftWidth : section.colLeftWidth} );
 	}
 	
 	return html;
