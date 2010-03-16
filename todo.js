@@ -13,6 +13,8 @@ var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var m_todoFiles = []
 var m_files = []
 var m_log = []
+var m_verNumber = "-"
+var m_verReleaseDate = "-"
 
 var m_sections = 
 [
@@ -63,6 +65,14 @@ $(document).ready(function()
 	}
 	
 	Log( "info", "Loaded: " + (new Date()) )
+	
+	$.get( 'TodoGadgetManifest.js', function(data) 
+	{
+		var manifest = JSON.parse( data )
+		m_verNumber = manifest.Release.VersionNumber;
+		m_verReleaseDate = manifest.Release.ReleaseDate;
+	});
+
 });
 
 
@@ -418,11 +428,6 @@ function Log( level, message )
 	var log = { level:level, message:message, at:new Date() }
 	m_log[ m_log.length ] = log
 	$("#logContent > tbody:first").prepend( $("#LogItemTemplate").parseTemplate( log ) );
-}
-
-function CallMe()
-{
-	debugger;
 }
 
 function NonGadgetSettings()
