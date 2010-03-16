@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
 		<script type="text/javascript" src="json2.js"></script>
 		
+		<script type="text/javascript" src="TodoGadgetVersion.js"></script>
 		<script type="text/javascript" src="Gadget.js"></script>
 		<script type="text/javascript" src="todoParser.js"></script>
 		<script type="text/javascript" src="dataTemplate.js"></script>
@@ -111,6 +112,7 @@ File: <#=item.file.path#>\r\n
 								<li><a href="#tabs-project">Project</a></li>
 								<li><a href="#tabs-log">Log</a></li>
 								<li><a href="#tabs-todo">TODO</a></li>
+								<li><a href="#tabs-about">About</a></li>
 							</ul>
 							
 							<div id="tabs-all" class="tabItem">
@@ -144,6 +146,16 @@ File: <#=item.file.path#>\r\n
 									</ul>
 								</div>
 							</div>
+							
+							<div id="tabs-about" class="tabItem">
+								<div id="aboutTabContent" class="tabContent">
+									<h3>TODO List Overview Gadget</h3>
+									(c) 2010 Andre Van Der Merwe<br/>
+									<hr/>
+									Version: <span id="versionNumber"></span><br/>
+									Release Date: <span id="versionReleaseDate"></span><br/>
+								</div>
+							</div>							
 							
 						</div>
 					</div>

@@ -125,6 +125,9 @@ function LoadPage()
 	
 	LoadProjectAccordion();	
 	$("#statusBar").html("loaded");
+	
+	$("#versionNumber").html(m_verNumber);
+	$("#versionReleaseDate").html(m_verReleaseDate);
 }
 
 function ReadConfig()
