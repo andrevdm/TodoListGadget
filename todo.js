@@ -18,7 +18,7 @@ var m_verReleaseDate = "2010/03/16"
 var m_manifest = {
 	"Release" : 
 	{
-		"VersionNumber" : "0.2.5",
+		"VersionNumber" : "0.2.6",
 		"ReleaseDate" : "2010/03/16",
 		"LatestManifestUrl" : "http://github.com/andrevdm/TodoListGadget/raw/master/TodoGadgetManifest.js",
 		"_LatestManifestUrl" : "http://localhost/Gadgets/TestTodoGadgetManifest.js"
@@ -128,9 +128,13 @@ function ReLoadPage()
 	window.location = window.location
 }
 
+function SetStatus( msg )
+{
+	$("#statusBar").html( msg );
+}
+
 function LoadPage()
 {
-	$("#statusBar").html("loading");
 	var files = TodoParser.ParseFiles( m_todoFiles )
 	m_files = files
 	
@@ -141,7 +145,7 @@ function LoadPage()
 	$('#accMenu').html(output);
 	
 	LoadProjectAccordion();	
-	$("#statusBar").html("loaded");
+	SetStatus( "loaded" );
 	
 	$("#versionNumber").html(m_verNumber);
 	$("#versionReleaseDate").html(m_verReleaseDate);
@@ -360,7 +364,7 @@ function OnMouseClickItem( row )
 	}
 	catch( ex )
 	{
-		$("#statusBar").html( "Exception: " + ex.message )
+		SetStatus( "Exception: " + ex.message )
 	}
 }
 
@@ -374,7 +378,7 @@ function OnMouseOverItem( row )
 		var file = info.file
 		var item = info.item
 		
-		$("#statusBar").html(row.itemId + ", f=" + file.path + ", i=" + item.id );
+		SetStatus( row.itemId + ", f=" + file.path + ", i=" + item.id );
 		
 		//Cache row title
 		if( row.title == "" )
@@ -384,7 +388,7 @@ function OnMouseOverItem( row )
 	}
 	catch( ex )
 	{
-		$("#statusBar").html( "Exception: " + ex.message )
+		SetStatus( "Exception: " + ex.message );
 	}
 }
 
@@ -447,8 +451,9 @@ function CheckForNewVersion()
 {
 	$("#checkForNewVersion").css( "display", "none" );
 	$("#versionCheckStatus").html( "checking..." );
+	SetStatus( "downloading " + m_manifest.Release.LatestManifestUrl );
 	
-	$.get( m_manifest.Release.LatestManifestUrl, function(data, sts) 
+	$.get( m_manifest.Release.LatestManifestUrl + "?rand=" + Math.random(), function(data, sts) 
 	{
 			try
 			{
