@@ -76,6 +76,15 @@ table
 	white-space: nowrap;
 }
 
+.twoColPriority
+{
+	border: solid; 
+	padding: 0px; 
+	border-color: #a0a0a0; 
+	border-width=1px;
+	white-space: nowrap;
+}
+
 .twoColTitle
 {
 	border: solid; 

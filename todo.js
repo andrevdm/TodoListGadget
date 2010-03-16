@@ -18,7 +18,7 @@ var m_verReleaseDate = "2010/03/16"
 var m_manifest = {
 	"Release" : 
 	{
-		"VersionNumber" : "0.2.6",
+		"VersionNumber" : "0.2.7",
 		"ReleaseDate" : "2010/03/16",
 		"LatestManifestUrl" : "http://github.com/andrevdm/TodoListGadget/raw/master/TodoGadgetManifest.js",
 		"_LatestManifestUrl" : "http://localhost/Gadgets/TestTodoGadgetManifest.js"

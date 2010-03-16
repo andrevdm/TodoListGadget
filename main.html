@@ -28,6 +28,7 @@
 					<tr class="twoColRow" onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
 						<td class="twoColLeft" width="<#=colLeftWidth#>px;"><#= section.formatLeftCol( item ) #></td>
 						<td class="twoColTitle" style="color:<#=item.file.info.textColour#>"><#= item.title#></td>
+						<td width="7" class="twoColPriority" style="background-color:<#=m_priorityColours[ item.priority ]#>" alt="<#=item.priority#>">&nbsp;</td>
 					</tr>
 					<#
 				}
@@ -44,6 +45,7 @@
 				#>
 					<tr class="twoColRow" onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
 						<td class="twoColTitle" style="color:<#=item.file.info.textColour#>"><#= item.title#></td>
+						<td width="7" class="twoColPriority" style="background-color:<#=m_priorityColours[ item.priority ]#>" alt="<#=item.priority#>">&nbsp;</td>
 					</tr>
 				<#
 			}
