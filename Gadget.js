@@ -44,9 +44,3 @@ function InitTodoGadget()
 	m_todoFiles = ReadConfig()
 }
 
-function ReadConfig()
-{
-	var files = System.Gadget.Settings.read( "todoFiles" )
-	var parsed = JSON.parse( files );
-	return parsed;
-}

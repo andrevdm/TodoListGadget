@@ -11,7 +11,6 @@ var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", 
 var m_day=1000*60*60*24
 var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var m_todoFiles = []
-var m_todoFiles = []
 var m_files = []
 var m_log = []
 
@@ -126,6 +125,21 @@ function LoadPage()
 	
 	LoadProjectAccordion();	
 	$("#statusBar").html("loaded");
+}
+
+function ReadConfig()
+{
+	try
+	{
+		var files = System.Gadget.Settings.read( "todoFiles" )
+		var parsed = JSON.parse( files );
+		return parsed;
+	}
+	catch( ex )
+	{
+		Log( "error", "exception parsing JSON\r\nException: " + ex.message + "\r\nJSON: " + files )
+		return new Array();
+	}
 }
 
 function UpdateFilesFromSettingsPage( itemsFromSettings )
