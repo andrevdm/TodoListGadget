@@ -13,8 +13,18 @@ var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var m_todoFiles = []
 var m_files = []
 var m_log = []
-var m_verNumber = "-"
-var m_verReleaseDate = "-"
+var m_verNumber = "0.2.6"
+var m_verReleaseDate = "2010/03/16"
+var m_manifest = {
+	"Release" : 
+	{
+		"VersionNumber" : "0.2.5",
+		"ReleaseDate" : "2010/03/16",
+		"LatestManifestUrl" : "http://github.com/andrevdm/TodoListGadget/raw/master/TodoGadgetManifest.js",
+		"_LatestManifestUrl" : "http://localhost/Gadgets/TestTodoGadgetManifest.js"
+	}
+}
+
 
 var m_sections = 
 [
@@ -54,25 +64,22 @@ $(window).error(function()
 	Log( "error", "exception" )
 	return true;
 });
-	
-$(document).ready(function()
-{
-	$('#tabs').tabs();
-	
-	if( m_refreshMinutes > 0 )
-	{
-		setTimeout( LoadPage, 1000 * 60 * m_refreshMinutes );
-	}
-	
-	Log( "info", "Loaded: " + (new Date()) )
-	
-	$.get( 'TodoGadgetManifest.js', function(data) 
-	{
-		var manifest = JSON.parse( data )
-		m_verNumber = manifest.Release.VersionNumber;
-		m_verReleaseDate = manifest.Release.ReleaseDate;
-	});
 
+$(document).ready(function() {
+    $('#tabs').tabs();
+
+    if (m_refreshMinutes > 0) {
+        setTimeout(LoadPage, 1000 * 60 * m_refreshMinutes);
+    }
+
+    Log("info", "Loaded: " + (new Date()))
+
+    /*$.get('TodoGadgetManifest.js', "", function(data) 
+    {
+        m_manifest = $.parseJSON(data);
+        m_verNumber = m_manifest.Release.VersionNumber;
+        m_verReleaseDate = m_manifest.Release.ReleaseDate;
+    });*/
 });
 
 
@@ -434,4 +441,64 @@ function NonGadgetSettings()
 {
 	var settings = window.open( "settings.html", "todo_gadget_settings", "status=1, toolbar=0, location=1, menubar=1, width=400, height=300" )
 	settings.focus();
+}
+
+function CheckForNewVersion()
+{
+	$("#checkForNewVersion").css( "display", "none" );
+	$("#versionCheckStatus").html( "checking..." );
+	
+	$.get( m_manifest.Release.LatestManifestUrl, function(data, sts) 
+	{
+			try
+			{
+				manifest = $.parseJSON( data );
+				$("#versionCheckStatus").html( "Latest version is " + manifest.Release.VersionNumber );
+				
+				if( IsNewerVersion( m_manifest.Release.VersionNumber, manifest.Release.VersionNumber ) )
+				{
+					$("#versionCheckStatus").append( "<br/> a newer version exists" );
+				}
+				else
+				{
+					$("#versionCheckStatus").append( "<br/> you have the latest version" );
+				}
+			}
+			catch( ex )
+			{
+				$("#versionCheckStatus").html( ex.message != null ? ex.message : ex );
+			}
+	});
+}
+
+function IsNewerVersion( oldVersion, newVersion )
+{
+	var verRe = /^(\d+)\.(\d+)\.(\d+)$/i;
+	var oldMatch = oldVersion.match( verRe );
+	var newMatch = newVersion.match( verRe );
+	
+	var oldA = oldMatch[1];
+	var oldB = oldMatch[2];
+	var oldC = oldMatch[3];
+	
+	var newA = newMatch[1];
+	var newB = newMatch[2];
+	var newC = newMatch[3];
+	
+	if( newA > oldA )
+		return true;
+	
+	if( newA < oldA )
+		return false;
+
+	if( newB > oldB )
+		return true;
+	
+	if( newB < oldB )
+		return false;
+
+	if( newC > oldC )
+		return true;
+		
+	return false;
 }
