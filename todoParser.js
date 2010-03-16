@@ -1,19 +1,22 @@
 TodoParser = 
 {
-	ParseFiles : function( paths )
+	ParseFiles : function( items )
 	{
 		var files = []
 			
-		for( var i = 0; i < paths.length; ++i )
+		for( var i = 0; i < items.length; ++i )
 		{
 			try
 			{
-				var info = new TodoFile( paths[ i ] )
+				var path = items[ i ].path
+				var info = new TodoFile( items[ i ] )
 				
 				files[ files.length ] = info
 				
-				this.ParseFile( paths[i], info.items, info )
-				Log( "info", "Parsed " + paths[i] )
+				this.ParseFile( path, info.items, info )
+				
+				//~ Log( "info", "Parsed " + path )
+				//TODO enable logging when the log window only keeps the top n items
 			}
 			catch( ex )
 			{
@@ -78,10 +81,11 @@ function TodoItem( node, file )
 	this.comments = node.getAttributeNode( "COMMENTS" ) != null ? node.getAttributeNode( "COMMENTS" ).value : ""
 }
 
-function TodoFile( path )
+function TodoFile( info )
 {
 	this.type = "TodoFile"
-	this.path = path
+	this.path = info.path
+	this.info = info
 	this.items = []	
 	
 	this.SelectItems = function( filters )

@@ -23,7 +23,7 @@ function InitGadget()
 		System.Gadget.Settings.settings = [];
 		System.Gadget.document = document
 		
-		System.Gadget.Settings.settings[ "todoFiles" ] = "C:\\temp\\a.xml\r\nc:\\temp\\a2.xml";
+		System.Gadget.Settings.settings[ "todoFiles" ] = JSON.stringify( [{"path":"C:\\temp\\a.xml","textColour":"#000000"}, {"path":"C:\\temp\\a2.xml","textColour":"#0000ff"}] );
 	}
 	else
 	{
@@ -47,17 +47,6 @@ function InitTodoGadget()
 function ReadConfig()
 {
 	var files = System.Gadget.Settings.read( "todoFiles" )
-	
-	var items = files.split( "\r\n" )
-	todoFiles = new Array();
-	
-	for( var i = 0; i < items.length; ++i )
-	{
-		if( items[i] != "" )
-		{
-			todoFiles[ todoFiles.length ] = items[ i ];
-		}
-	}
-	
-	return todoFiles;
+	var parsed = JSON.parse( files );
+	return parsed;
 }

@@ -2,7 +2,6 @@
 //Config
 //-----------------
 //TODO should be on the config screen
-var m_todoFiles = new Array();
 var m_refreshMinutes = 5
 var m_defaultTimeHour = 8
 var m_defaultTimeMinute = 0
@@ -12,7 +11,8 @@ var m_priorityColours = ["#1EE100", "#00E43F", "#00E7A0", "#00D1EA", "#0071ED", 
 var m_day=1000*60*60*24
 var m_days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var m_todoFiles = []
-var m_files = null
+var m_todoFiles = []
+var m_files = []
 var m_log = []
 
 var m_sections = 
@@ -128,15 +128,20 @@ function LoadPage()
 	$("#statusBar").html("loaded");
 }
 
-function UpdateFilesFromSettingsPage( files )
+function UpdateFilesFromSettingsPage( itemsFromSettings )
 {
-	m_files = []
-	
-	for( var i = 0; i < files.length; ++i )
+	var items = []
+	for( var i in itemsFromSettings )
 	{
-		//Make a local copy of the string
-		m_files[ m_files.length ] = "" + files[ i ]
+		var s = itemsFromSettings[ i ]
+		items[ items.length ] = { path : s.path, textColour : s.textColour }
 	}
+	
+	var filesString = JSON.stringify( items );
+	System.Gadget.Settings.write( "todoFiles", filesString )
+	m_todoFiles = items
+	
+	LoadPage()
 }
 
 function FormatSectionsByProject( sections, files )

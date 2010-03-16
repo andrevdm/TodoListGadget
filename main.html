@@ -7,6 +7,7 @@
 		<link type="text/css" href="todo.css" rel="stylesheet" />	
 		<script type="text/javascript" src="jquery-1.4.1.js"></script>
 		<script type="text/javascript" src="jqueryui/js/jquery-ui-1.8rc3.custom.min.js"></script>
+		<script type="text/javascript" src="json2.js"></script>
 		
 		<script type="text/javascript" src="Gadget.js"></script>
 		<script type="text/javascript" src="todoParser.js"></script>
@@ -26,7 +27,7 @@
 					#>
 					<tr class="twoColRow" onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
 						<td class="twoColLeft" width="<#=colLeftWidth#>px;"><#= section.formatLeftCol( item ) #></td>
-						<td class="twoColTitle"><#= item.title#></td>
+						<td class="twoColTitle" style="color:<#=item.file.info.textColour#>"><#= item.title#></td>
 					</tr>
 					<#
 				}
@@ -42,7 +43,7 @@
 				var item = items[ i ];
 				#>
 					<tr class="twoColRow" onmouseover="OnMouseOverItem( this )" onclick="OnMouseClickItem( this )" onmouseout="OnMouseOutItem( this )" itemId="<#=item.id#>" filePath="<#=item.file.path#>">
-						<td class="twoColTitle"><#= item.title#></td>
+						<td class="twoColTitle" style="color:<#=item.file.info.textColour#>"><#= item.title#></td>
 					</tr>
 				<#
 			}
